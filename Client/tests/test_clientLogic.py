@@ -17,6 +17,9 @@ class TestClientLogic(unittest.TestCase):
         self.assertIsNone(L.decodeQuery(b'hello'))
         self.assertIsNone(L.decodeQuery(pickle.dumps({'control':'wrong','content':'test3'})))
 
+    def test_generateParamsQuery(self): #TODO not sure if this format will fly :)
+        self.assertEqual(L.generateParamsQuery('test'),pickle.dumps({'control':'new_report','content':'test'}))
+        self.assertEqual(L.generateParamsQuery('test','params'),pickle.dumps({'control':'new_report','content':'<symptoms:>test<data:>params'}))
 
 if __name__ == "__main__": 
     unittest.main()

@@ -15,6 +15,7 @@ def generateParamsQuery(patientInput:str, params:str=None):
     
     `Content With no params->` patientInput'''
     if params != None: return pickle.dumps({'control':'new_report','content':"<symptoms:>"+patientInput+"<data:>"+params}) 
+    #TODO @alba your choice on query struct
     return pickle.dumps({'control':'new_report','content':patientInput})
 
 def generateLogInQuery(usr:str,psw:bytes):
