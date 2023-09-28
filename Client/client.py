@@ -10,7 +10,8 @@ def runClient():
     while True:
         try:
             n,p=I.startUp()
-            if not c.logIn(n,L.generatePswHash(p)): I.wrongLogIn()
+            c.sendMsg(L.generateLogInQuery(n,L.generatePswHash(p)))
+            if L.decodeQuery(c.recvMsg(2048)) in (None, 'wrongUserPassword'): I.wrongLogIn()
             else:   
                 while True:
                     match I.mainMenu():
@@ -21,8 +22,9 @@ def runClient():
                                 params=None
                                 #TODO añadir control de error si no hay conexion correcta
                                 c.sendMsg(L.generateParamsQuery(symptoms,params)) #TODO enviar la info (con o sin params)
-                            else: c.sendMsg(L.generateParamsQuery(symptoms)) #TODO enviar la info (con o sin params)
-                            I.success()
+                            else: c.sendMsg(L.generateParamsQuery(symptoms)) 
+                            if L.decodeQuery(c.recvMsg(2048)) in (None,'error?????'): I.errorWithParams()
+                            else: I.success()
                         case 2:
                             c.logOut()
                             raise SystemExit
