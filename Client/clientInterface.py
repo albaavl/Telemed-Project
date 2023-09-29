@@ -43,7 +43,7 @@ def askForSymptoms():
     return input("Please introduce your symptoms below:\n")
 
 def askForParameters():
-    '''Ask user via terminal whther they want to record parameters or not, returns True/False'''
+    '''Ask user via terminal whether they want to record parameters or not, returns True/False'''
     while True:
         os.system("cls")
         i=input("Would you like to record parameters with your bitalino device? (y/n)")

@@ -51,4 +51,19 @@ class myServer:
             print('adding new report')
             csocket.send(pickle.dumps({'control': 'success', 'content': 'Success: report added to database'}))
         elif dic_message['control'] == 'show_patients':
-            #TODO database
+            #TODO database and answer
+        elif dic_message['control']=='show_reports':
+            #TODO database and answer
+        elif dic_message['control'] == 'add_comments':
+            #TODO update database with comments
+        elif dic_message['control'] == 'add_user':
+            #TODO new user
+        elif dic_message['control'] == 'delete_user':
+            #TODO del user
+        elif dic_message['control'] == 'login':
+            #TODO verify passw and user and return role if success or error otherwise
+
+    def disconnectClient(self, csocket):
+       csocket.close()
+       self.sockets.remove(csocket)
+       print('Client out!')
