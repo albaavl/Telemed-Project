@@ -1,6 +1,7 @@
 import sqlite3
 
 
+@DeprecationWarning
 class Manager:
 
     def __init__(self):
