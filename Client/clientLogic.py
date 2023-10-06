@@ -1,4 +1,5 @@
 import hashlib, pickle
+from pylsl import StreamInlet, resolve_stream
 
 
 def generatePswHash(password:str):
@@ -6,8 +7,17 @@ def generatePswHash(password:str):
     hashgen.update(password.encode('utf8'))
     return hashgen.digest()
 
-def connectToBitalino(mac:str):
-    pass
+def connectToBitalino(mac:str) -> (str,False):
+    os_stream=resolve_stream("type", mac)
+    if os_stream is None: return False
+    inlet=StreamInlet(os_stream[0])
+    data=""
+    while True:
+        samples,timestamp= inlet.pull_sample()
+        if (samples,timestamp) is (None,None): break
+        data=data+"("+timestamp+","+samples+") "
+    return data
+    
 
 
 def generateParamsQuery(patientInput:str, params:str=None):
