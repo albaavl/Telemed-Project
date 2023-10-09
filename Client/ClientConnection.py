@@ -1,5 +1,6 @@
 import socket
 
+
 class ClientConnection:
 
     def __init__(self,servIp:str|None='127.0.0.1',servPort:int|None=1111):

@@ -46,3 +46,6 @@ class Manager:
 
     def deleteUser(self, userId:int):
         self.cursor.execute("DELETE * FROM users WHERE userId = ?",(userId,))
+
+    def new_report(self):
+        #TODO create query

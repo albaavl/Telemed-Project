@@ -1,4 +1,5 @@
-import socket, select, pickle
+import socket, select, pickle, databaseManager as db
+
 
 class myServer:
     def __init__(self, ip_port=("0.0.0.0",1111)):
@@ -47,7 +48,11 @@ class myServer:
         if dic_message['control'] not in possible_controls:
             csocket.send(pickle.dumps({'control': 'error', 'content':'Error: format not understood'}))
         elif dic_message['control'] == 'new_report':
-            #TODO add report to database and error control
+            #receives a list 1st element = symptoms and 2nd = bitalino
+            content = dic_message['content']
+            if len(content) < 2: #in case there is no bitalino reading in the report
+                content.append(None)
+            db.Manager.new_report(content[0], content[1])
             print('adding new report')
             csocket.send(pickle.dumps({'control': 'success', 'content': 'Success: report added to database'}))
         elif dic_message['control'] == 'show_patients':
