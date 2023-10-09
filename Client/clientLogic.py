@@ -7,32 +7,29 @@ def generatePswHash(password:str):
     hashgen.update(password.encode('utf8'))
     return hashgen.digest()
 
-def connectToBitalino(mac:str) -> (str,False):
+def connectToBitalino(mac:str) -> (list,False):
     os_stream=resolve_stream("type", mac)
     if os_stream is None: return False
     inlet=StreamInlet(os_stream[0])
-    data=""
+    data=[]
     while True:
         samples,timestamp= inlet.pull_sample()
         if (samples,timestamp) is (None,None): break
-        data=data+"("+timestamp+","+samples+") "
+        data.append("("+timestamp+","+samples+")")
     return data
     
 
+def sendParams(patientInput:str, params:list=None):
+    '''`Content:` list [patientInput(String),params(list)]'''    
+    inputData=[patientInput,]
+    if params != None: inputData.append(params)
+    return pickle.dumps({'control':'new_report','content':inputData})
 
-def generateParamsQuery(patientInput:str, params:str=None):
-    '''`Content With params->` <symptoms:>patientInput<data:>params
-    
-    `Content With no params->` patientInput'''
-    if params != None: return pickle.dumps({'control':'new_report','content':"<symptoms:>"+patientInput+"<data:>"+params}) 
-    #TODO @alba your choice on query struct
-    return pickle.dumps({'control':'new_report','content':patientInput})
-
-def generateLogInQuery(usr:str,psw:bytes):
-    return pickle.dumps({'control':'login','content':'query'})#TODO CHANGE QUERY FOR THE ACTUAL LOGIN QUERY
+def sendLoginCredentials(usr:str,psw:bytes):
+    return pickle.dumps({'control':'login','content':[usr,psw]}) 
 
 
-def decodeQuery(query:bytes)->(str|None):
+def decodeServerResponse(query:bytes)->(str|None):
     '''Return `(str)content` AKA the response value, or  `None` if the response has invalid format'''
     try:
         response=pickle.loads(query)
