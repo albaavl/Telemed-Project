@@ -9,7 +9,7 @@ def generatePswHash(password:str):
 
 def connectToBitalino(mac:str) -> (list,False):
     '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
-    os_stream=resolve_stream("type", mac)#TODO CHANGE TYPE FOR THE ACTUAL DATA TYPE WE'RE OBTAINING
+    os_stream=resolve_stream("type", mac) #TODO CHANGE TYPE FOR THE ACTUAL DATA TYPE WE'RE OBTAINING
     if os_stream is None: return False
     inlet=StreamInlet(os_stream[0])
     data=[]
