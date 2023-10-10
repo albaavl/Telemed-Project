@@ -1,4 +1,4 @@
-import hashlib, pickle
+import hashlib, json, pickle
 from pylsl import StreamInlet, resolve_stream
 
 
@@ -24,7 +24,7 @@ def sendParams(patientInput:str, params:list=None):
     '''`Content:` list [patientInput(String),params(list)]'''    
     inputData=[patientInput,]
     if params != None: inputData.append(params)
-    return pickle.dumps({'control':'new_report','content':inputData})
+    return json.dumps({'control':'new_report','content':inputData})
 
 def sendLoginCredentials(usr:str,psw:bytes):
     return pickle.dumps({'control':'login','content':[usr,psw]}) 
@@ -33,7 +33,7 @@ def sendLoginCredentials(usr:str,psw:bytes):
 def decodeServerResponse(query:bytes)->(str|None):
     '''Return `(str)content` AKA the response value, or  `None` if the response has invalid format'''
     try:
-        response=pickle.loads(query)
+        response=json.loads(query)
         if not response: return None
         if response['control'] in ('success','error'): return response['content']
         else:return None
