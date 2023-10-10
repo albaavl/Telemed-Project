@@ -1,4 +1,4 @@
-import socket, select, pickle, databaseManager as db
+import socket, select, pickle, json, databaseManager as db
 
 
 class myServer:
@@ -46,7 +46,7 @@ class myServer:
     def decode_message(self,dic_message,csocket):
         possible_controls = ['new_report','show_patients','show_reports','add_comments','add_user','delete_user','login']
         if dic_message['control'] not in possible_controls:
-            csocket.send(pickle.dumps({'control': 'error', 'content':'Error: format not understood'}))
+            csocket.send(json.dumps({'control': 'error', 'content':'Error: format not understood'}))
         elif dic_message['control'] == 'new_report':
             #receives a list 1st element = symptoms and 2nd = bitalino
             content = dic_message['content']
@@ -54,19 +54,34 @@ class myServer:
                 content.append(None)
             db.Manager.new_report(content[0], content[1])
             print('adding new report')
-            csocket.send(pickle.dumps({'control': 'success', 'content': 'Success: report added to database'}))
+            csocket.send(json.dumps({'control': 'success', 'content': 'Success: report added to database'}))
         elif dic_message['control'] == 'show_patients':
-            #TODO database and answer
+            patientList = db.Manager.get_patients()
+            print('getting patients from db')
+            csocket.send(json.dumps({'control': 'success', 'content': patientList}))
         elif dic_message['control']=='show_reports':
-            #TODO database and answer
+            #the content of the dic is the user_id of the patient
+            reports = db.Manager.get_reports(dic_message['content'])
+            print('getting reports from db')
+            csocket.send(json.dumps({'control': 'success', 'content': reports}))
         elif dic_message['control'] == 'add_comments':
-            #TODO update database with comments
+            #the content of the dic is the report_id
+            db.Manager.add_comments(dic_message['content'])
+            print('adding comments to db')
+            csocket.send(json.dumps({'control': 'success', 'content': 'New comments successfully added to the report'}))
         elif dic_message['control'] == 'add_user':
             #TODO new user
         elif dic_message['control'] == 'delete_user':
-            #TODO del user
+            #the content of the dic is the user_id
+            db.Manager.deleteUser(dic_message['content'])
+            print('Deleting user')
+            csocket.send(json.dumps({'control': 'success', 'content': 'User deleted successfully'}))
         elif dic_message['control'] == 'login':
-            #TODO verify passw and user and return role if success or error otherwise
+            #content = list -> first element is the username and the 2nd is the password
+            username, password = dic_message['content'][0], dic_message['content'][1]
+            userType = db.Manager.checkUser(username,password)
+            print('logging in new client')
+            csocket.send(json.dumps({'control': 'success', 'content': userType}))
 
     def disconnectClient(self, csocket):
        csocket.close()
