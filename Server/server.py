@@ -70,7 +70,10 @@ class myServer:
             print('adding comments to db')
             csocket.send(json.dumps({'control': 'success', 'content': 'New comments successfully added to the report'}))
         elif dic_message['control'] == 'add_user':
-            #TODO new user
+            username, password, userType = dic_message['content'][0],dic_message['content'][1], dic_message['content'][2]
+            db.Manager.createUser(username, password, userType)
+            print('adding user to db')
+            csocket.send(json.dumps({'control': 'success', 'content': 'New user successfully added'}))
         elif dic_message['control'] == 'delete_user':
             #the content of the dic is the user_id
             db.Manager.deleteUser(dic_message['content'])
