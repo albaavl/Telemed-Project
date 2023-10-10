@@ -9,7 +9,7 @@ def runClient():
 
     while True:
         try:
-            n,p=I.startUp()
+            n,p=I.logIn()
             c.sendMsg(L.generateLogInQuery(n,L.generatePswHash(p)))
             if L.decodeQuery(c.recvMsg(2048)) in (None, 'wrongUserPassword'): I.wrongLogIn()
             else:   
