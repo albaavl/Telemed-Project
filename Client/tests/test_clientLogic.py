@@ -22,5 +22,11 @@ class TestClientLogic(unittest.TestCase):
     def test_sendLoginCredentials(self):
         self.assertEqual(L.sendLoginCredentials('User',b'Password'),pickle.dumps({'control':'login','content':['User',b'Password']}))
 
+    def test_admin_createUser(self):
+        self.assertEqual(L.admin_createUser("Name",b'psw',0),pickle.dumps({'control':'add_user','content':("Name",b'psw',0)}))
+
+    def test_admin_deleteUser(self):
+        self.assertEqual(L.admin_deleteUser(0),json.dumps({'control':'delete_user','content':0}))
+
 if __name__ == "__main__": 
     unittest.main()

@@ -42,3 +42,13 @@ def patient_sendParams(patientInput:str, params:list=None):
 
 
 #Admin only
+
+def admin_createUser(name:str, psw:bytes, type:int):
+    userData=(name,psw,type)
+    return pickle.dumps({'control':'add_user','content':userData})
+
+def admin_showAllUsers():
+    return json.dumps({'control':'show_all_users'})
+
+def admin_deleteUser(userID:int):
+    return json.dumps({'control':'delete_user','content':userID})

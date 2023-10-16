@@ -69,3 +69,34 @@ def patient_errorWithParams():
 
 #Admin only
 
+def admin_mainMenu():
+    '''Generates the main menu for the user, returns the option chosen by the user: 1-Add user; 2-Delete user; 3-Logout'''
+    os.system("cls")
+    print("Available options:")
+    print("  1.Create a new user.")
+    print("  2.Delete selected user.")
+    print("  3.Log out.")
+    return int(input("Please select one option: "))
+
+def admin_addUser():
+    os.system("cls")
+    print("--- Create new user ---")
+    print("Leave name field empty to go back into main menu.")
+    name=input("User name:")
+    if name == "\n": return None
+    psw=input("User password:")
+    while True:
+        t=input("User type (Admin/Clinician/Patient): ")
+        t=t.capitalize
+        if t in ("ADMIN", "A"): return (name, psw, 0)
+        elif t in ( "CLINICIAN", "C"): return (name, psw, 1)
+        elif t in ("PATIENT", "P"): return (name, psw, 2)
+        else: 
+            print("Invalid user type, please use Admin/A, Clinician/C or Patient/P")
+            input("Press intro to continue...")
+
+def admin_failedUserCreation():
+    pass
+
+def admin_selectUser():
+    pass
