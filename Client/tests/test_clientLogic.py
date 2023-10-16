@@ -15,9 +15,9 @@ class TestClientLogic(unittest.TestCase):
         self.assertIsNone(L.decodeServerResponse(b'hello'))
         self.assertIsNone(L.decodeServerResponse(json.dumps({'control':'wrong','content':'test3'})))
 
-    def test_sendParams(self): 
-        self.assertEqual(L.sendParams('test'),json.dumps({'control':'new_report','content':['test',]}))
-        self.assertEqual(L.sendParams('test',['params',]),json.dumps({'control':'new_report','content':['test',['params',]]}))
+    def test_patient_sendParams(self): 
+        self.assertEqual(L.patient_sendParams('test'),json.dumps({'control':'new_report','content':['test',]}))
+        self.assertEqual(L.patient_sendParams('test',['params',]),json.dumps({'control':'new_report','content':['test',['params',]]}))
 
     def test_sendLoginCredentials(self):
         self.assertEqual(L.sendLoginCredentials('User',b'Password'),pickle.dumps({'control':'login','content':['User',b'Password']}))

@@ -14,21 +14,23 @@ def runClient():
             clientType = L.decodeQuery(c.recvMsg(2048))
             if clientType in (None, 'wrongUserPassword'): I.wrongLogIn()
             elif clientType == 'clinician':
+                pass
                 #TODO MENU CLINICIAN
             elif clientType == 'admin':
+                pass
                 #TODO ADMIN MENU
             else: #its a patient, no more choices
                 while True:
-                    match I.mainMenu():
+                    match I.patient_mainMenu():
                         case 1:
-                            symptoms=I.askForSymptoms()
-                            if I.askForParameters():
-                                L.connectToBitalino(I.askForBitalinoMAC())
+                            symptoms=I.patient_askForSymptoms()
+                            if I.patient_askForParameters():
+                                L.patient_connectToBitalino(I.patient_askForBitalinoMAC())
                                 params=None
                                 #TODO añadir control de error si no hay conexion correcta y guardar datos bitalino
                                 c.sendMsg(L.generateParamsQuery(symptoms,params)) #TODO enviar la info (con o sin params)
                             else: c.sendMsg(L.generateParamsQuery(symptoms)) 
-                            if L.decodeQuery(c.recvMsg(2048)) in (None,'error?????'): I.errorWithParams()
+                            if L.decodeQuery(c.recvMsg(2048)) in (None,'error?????'): I.patient_errorWithParams()
                             else: I.success()
                         case 2:
                             c.logOut()
