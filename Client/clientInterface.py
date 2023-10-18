@@ -67,6 +67,51 @@ def patient_errorWithParams():
     print('Something went wrong while sending data to the server. Please try again later.')
     input("Press enter to go back into main menu...")
 
+#Clinician only
+
+def clinician_mainMenu():
+    '''Generates the main menu for the health expert, returns the option chosen by the user: 1-Show patients; 2-Show reports; 3-Add comment; 4-Logout'''
+    os.system("cls")
+    print("Available options:")
+    print("  1.Show patients.")
+    print("  2.Show reports.")
+    print("  3.Add comment to a report.")
+    print("  4.Log out.")
+    return int(input("Please select one option: "))
+
+def clinician_showPatients(patients: list):
+    '''Shows the list of patients in the terminal, returns the selected patient'''
+    os.system("cls")
+    print("Available patients:")
+    for i in range(len(patients)):
+        print("  "+str(i+1)+". "+patients[i])
+    opt=int(input("Please select one option: "))
+    return opt-1
+
+def clinician_showPatientReports(reports: list):
+    '''Shows the data of the patient in the terminal, returns the selected report'''
+    os.system("cls")
+    print("Available reports:")
+    for i in range(len(reports)):
+        print("  "+str(i+1)+". "+reports[i])
+    opt=int(input("Please select one option: "))
+    return reports[opt-1]
+
+def showSelectedReport(report: list):
+    '''Shows the data of the selected report in the terminal'''
+    #No tengo muy claro como esta estructurado el contenido del reporte, asi que lo dejo como lista por si acaso
+    print("Report data:")
+    print("  Date: "+report[0])
+    print("  Symptoms: "+report[1])
+    print("  Signal: "+report[2])
+    print("  Comments: "+report[3])
+    
+
+
+def clinician_errorWithPatients():
+    print('Something went wrong while getting the information from the server. Please try again later.')
+    input("Press enter to go back into main menu...")
+
 #Admin only
 
 def admin_mainMenu():

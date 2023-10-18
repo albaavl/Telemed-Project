@@ -10,12 +10,29 @@ def runClient():
     while True:
         try:
             n,p=I.logIn()
-            c.sendMsg(L.generateLogInQuery(n,L.generatePswHash(p)))
+            c.sendMsg(L.sendLoginCredentials(n,L.generatePswHash(p)))
             clientType = L.decodeServerResponse(c.recvMsg(2048))
             if clientType in (None, 'wrongUserPassword'): I.wrongLogIn()
             elif clientType == 'clinician':
-                pass
-                #TODO MENU CLINICIAN
+                while True:
+                    match I.clinician_mainMenu():
+                        case 1: #Show all patients
+                            c.sendMsg(L.clinician_requestPatientsList())
+                            patientList = L.decodeServerResponse(c.recvMsg(2048))
+                            if patientList in (None,'huh'):
+                                I.clinician_errorWithPatients()
+                            else:
+                                '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
+                                patientID = I.clinician_showPatients(patientList)
+                                c.sendMsg(L.clinician_requestPatientReports(patientID))
+                                patientReports = L.decodeServerResponse(c.recvMsg(2048))
+                                if patientReports in (None,'huh'):
+                                    I.clinician_errorWithPatients()
+                                else:
+                                    report = I.clinician_showPatientReports(patientReports)
+                                    I.showSelectedReport(report)
+                    
+                #TODO RESTO DEL MENU CLINICIAN
             elif clientType == 'admin':
                 while True:
                     match I.admin_mainMenu():

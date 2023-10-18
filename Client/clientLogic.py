@@ -1,5 +1,5 @@
 import hashlib, json, pickle
-from pylsl import StreamInlet, resolve_stream
+# from pylsl import StreamInlet, resolve_stream
 
 
 def generatePswHash(password:str):
@@ -21,17 +21,17 @@ def decodeServerResponse(query:bytes):
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str) -> (list,False):
-    '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
-    os_stream=resolve_stream("type", mac) #TODO CHANGE TYPE FOR THE ACTUAL DATA TYPE WE'RE OBTAINING
-    if os_stream is None: return False
-    inlet=StreamInlet(os_stream[0])
-    data=[]
-    while True:
-        samples,timestamp= inlet.pull_sample()
-        if (samples,timestamp) is (None,None): break
-        data.append("("+timestamp+","+samples+")")
-    return data
+# def patient_connectToBitalino(mac:str) -> (list,False):
+#     '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
+#     os_stream=resolve_stream("type", mac) #TODO CHANGE TYPE FOR THE ACTUAL DATA TYPE WE'RE OBTAINING
+#     if os_stream is None: return False
+#     inlet=StreamInlet(os_stream[0])
+#     data=[]
+#     while True:
+#         samples,timestamp= inlet.pull_sample()
+#         if (samples,timestamp) is (None,None): break
+#         data.append("("+timestamp+","+samples+")")
+#     return data
     
 
 def patient_sendParams(patientInput:str, params:list=None):
@@ -40,6 +40,13 @@ def patient_sendParams(patientInput:str, params:list=None):
     if params != None: inputData.append(params)
     return json.dumps({'control':'new_report','content':inputData})
 
+#Clinician only
+
+def clinician_requestPatientsList():
+    return json.dumps({'control':'show_patients'})
+
+def clinician_requestPatientReports(patientID:int):
+    return json.dumps({'control':'show_reports','content':patientID})
 
 #Admin only
 
