@@ -10,7 +10,7 @@ def runClient():
     while True:
         try:
             n,p=I.logIn()
-            c.sendMsg(L.generateLogInQuery(n,L.generatePswHash(p)))
+            c.sendMsg(L.sendLoginCredentials(n,L.generatePswHash(p)))
             clientType = L.decodeServerResponse(c.recvMsg(2048))
             if clientType in (None, 'wrongUserPassword'): I.wrongLogIn()
             elif clientType == 'clinician':
