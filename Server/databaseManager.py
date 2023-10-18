@@ -36,13 +36,14 @@ class Manager:
         #lo mismo que en createUser, devolveria algo para hacer el check de que t o d o guay
     def new_report(self):
         #TODO create query
+        pass
 
     def get_patients(self):
         #que devuelva una lista con todos los pacientes (userdID, username), error si no hay con explicacion
-
+         pass
     def get_reports(self, patientId):
         #que devuelva una lista con todos los reports del paciente (todos los parametros), error si no hay con explicacion
-
+         pass
     def add_comments(self, reportId, comments):
         #meter comments en el report y devolver algo como que ha ido bien, deberia dar error si el report no existe
-
+         pass

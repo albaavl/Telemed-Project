@@ -90,3 +90,8 @@ class myServer:
        csocket.close()
        self.sockets.remove(csocket)
        print('Client out!')
+       
+if __name__ == "__main__": 
+    server = myServer()
+    server.startServer()
+    server.listen()
