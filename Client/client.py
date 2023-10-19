@@ -16,7 +16,7 @@ def runClient():
             elif clientType == 'clinician':
                 while True:
                     match I.clinician_mainMenu():
-                        case 1: #Show all patients
+                        case 1: #Show all patients and reports
                             c.sendMsg(L.clinician_requestPatientsList())
                             patientList = L.decodeServerResponse(c.recvMsg(2048))
                             if patientList in (None,'huh'):
