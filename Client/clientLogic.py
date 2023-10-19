@@ -48,6 +48,9 @@ def clinician_requestPatientsList():
 def clinician_requestPatientReports(patientID:int):
     return json.dumps({'control':'show_reports','content':patientID})
 
+def clinician_addComments(reportID:int, comments:str):
+    return json.dumps({'control':'add_comments','content':[reportID,comments]})
+
 #Admin only
 
 def admin_createUser(name:str, psw:bytes, type:int):

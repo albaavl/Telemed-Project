@@ -105,12 +105,15 @@ def showSelectedReport(report: list):
     print("  Symptoms: "+report[1])
     print("  Signal: "+report[2])
     print("  Comments: "+report[3])
-    
-
 
 def clinician_errorWithPatients():
     print('Something went wrong while getting the information from the server. Please try again later.')
     input("Press enter to go back into main menu...")
+
+def clinitian_addComment():
+    '''Ask user via terminal for the comment, returns an unchecked string provided by the user'''
+    os.system("cls")
+    return input("Please introduce your comment below:\n")
 
 #Admin only
 

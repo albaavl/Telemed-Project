@@ -31,8 +31,31 @@ def runClient():
                                 else:
                                     report = I.clinician_showPatientReports(patientReports)
                                     I.showSelectedReport(report)
-                    
-                #TODO RESTO DEL MENU CLINICIAN
+                        case 2: #Add comment to a report
+                            #HAY UNA COCHINADA DE CODIGO REDUNDANTE, QUEDA PENDIENTE HACER UN REFACTOR
+                            # Y UBICARME RESPECTO A LA ESTRUCTURA DEL REPORT
+
+                            c.sendMsg(L.clinician_requestPatientsList())
+                            patientList = L.decodeServerResponse(c.recvMsg(2048))
+                            if patientList in (None,'huh'):
+                                I.clinician_errorWithPatients()
+                            else:
+                                '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
+                                patientID = I.clinician_showPatients(patientList)
+                                c.sendMsg(L.clinician_requestPatientReports(patientID))
+                                patientReports = L.decodeServerResponse(c.recvMsg(2048))
+                                if patientReports in (None,'huh'):
+                                    I.clinician_errorWithPatients()
+                                else:
+                                    report = I.clinician_showPatientReports(patientReports)
+                                    I.showSelectedReport(report)
+                                    comment = I.clinician_addComment()
+                                    c.sendMsg(L.clinician_addCommentToReport(report.id,comment))
+                                    serverResponse=L.decodeServerResponse(c.recvMsg(2048))
+                                    if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
+                                 #TODO RESTO DEL MENU CLINICIAN
+                
+            
             elif clientType == 'admin':
                 while True:
                     match I.admin_mainMenu():
