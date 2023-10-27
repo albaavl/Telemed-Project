@@ -81,8 +81,10 @@ class myServer:
             csocket.send(json.dumps({'control': 'success', 'content': 'User deleted successfully'}))
         elif dic_message['control'] == 'login':
             #content = list -> first element is the username and the 2nd is the password
-            username, password = dic_message['content'][0], dic_message['content'][1]
-            userType = db.Manager.checkUser(username,password)
+            userpass = dic_message['content']
+            username = userpass[0]
+            password = userpass[1]
+            userType = db.Manager.checkUser(username, password)
             print('logging in new client')
             csocket.send(json.dumps({'control': 'success', 'content': userType}))
 

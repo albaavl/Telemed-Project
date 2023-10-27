@@ -1,3 +1,4 @@
+import hashlib
 import sqlite3
 
 class Manager:
@@ -15,11 +16,14 @@ class Manager:
             self.cursor.execute('CREATE TABLE reports(id INTEGER PRIMARY KEY AUTOINCREMENT, '
                                 'patient_id INTEGER REFERENCES users(userId) ON UPDATE CASCADE ON DELETE SET NULL,'
                                 'date DATE NOT NULL, symptoms TEXT, paramBitalino TEXT NOT NULL, HpComments TEXT)')
+            self.createUser('admin',self.generatePswHash('admin'), 'admin')
+            self.createUser('patient', self.generatePswHash('patient'), 'patient')
+            self.createUser('clinician', self.generatePswHash('clinician'), 'clinician')
 
 
     #devuelve el userType en caso de existir el usuario y contraseña y si no existe devuelve excepcion
-    def checkUser(self,username:str,password:bytes):
-        self.cursor.execute("SELECT userType FROM users WHERE username=? AND password=? LIMIT 1",(username,password))
+    def checkUser(self,username:str,password):
+        self.cursor.execute("SELECT userType FROM users WHERE username=? AND password=?", username, password)
         user_type = self.cursor.fetchone()
         #tiene que devolver solo el tipo de usuario que es y si no esta en la tabla lanzar una excepcion
         if user_type:
@@ -31,8 +35,7 @@ class Manager:
 
     def createUser(self, username:str, password:bytes, userType:str):
         '''Raises ValueError if userType is not admin, patient or clinician'''
-        if userType not in ("admin", "patient","clinician"): raise ValueError(f"Invalid usertype, you have to choose between admin, 
-                                                                              patient or clinician") #añadiria texto al pq del value error para poder mandarlo al cliente y que se entienda cual es el error
+        if userType not in ("admin", "patient","clinician"): raise ValueError(f"Invalid usertype, you have to choose between admin, patient or clinician") #añadiria texto al pq del value error para poder mandarlo al cliente y que se entienda cual es el error
         #username deberia ser unico aka comprobar que no hay otro y sino tbb error
         self.cursor.execute("SELECT username FROM users WHERE username = ?",(username,))
         existing_username = self.cursor.fetchone()
@@ -80,3 +83,7 @@ class Manager:
         except Exception as e:
             raise ValueError(f"Failed to update comments")
 
+    def generatePswHash(password:str):
+        hashgen = hashlib.sha512()
+        hashgen.update(password.encode('utf8'))
+        return hashgen.digest()
