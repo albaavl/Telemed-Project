@@ -41,7 +41,7 @@ class Manager:
         existing_username = self.cursor.fetchone()
         if existing_username:
             raise ValueError(f"Username already taken, please choose a different username")
-        self.cursor.execute("INSERT INTO users (userId, username, userType, password) VALUES (?,?,?)",(username,password,userType))
+        self.cursor.execute("INSERT INTO users (username, password, userType) VALUES (?,?,?)",(username,password,userType))
         self.connection.commit()
         return True
         #devolver algo si se ha añadido bien, maybe un true?
