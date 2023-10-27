@@ -38,18 +38,18 @@ def patient_sendParams(patientInput:str, params:list=None):
     '''`Content:` list [patientInput(String),params(list)]'''    
     inputData=[patientInput,]
     if params != None: inputData.append(params)
-    return json.dumps({'control':'new_report','content':inputData})
+    return json.dumps({'control':'new_report','content':inputData}).encode('utf8')
 
 #Clinician only
 
 def clinician_requestPatientsList():
-    return json.dumps({'control':'show_patients'})
+    return json.dumps({'control':'show_patients'}).encode('utf8')
 
 def clinician_requestPatientReports(patientID:int):
-    return json.dumps({'control':'show_reports','content':patientID})
+    return json.dumps({'control':'show_reports','content':patientID}).encode('utf8')
 
 def clinician_addComments(reportID:int, comments:str):
-    return json.dumps({'control':'add_comments','content':[reportID,comments]})
+    return json.dumps({'control':'add_comments','content':[reportID,comments]}).encode('utf8')
 
 #Admin only
 
@@ -58,7 +58,7 @@ def admin_createUser(name:str, psw:bytes, type:int):
     return pickle.dumps({'control':'add_user','content':userData})
 
 def admin_showAllUsers():
-    return json.dumps({'control':'show_all_users'})
+    return json.dumps({'control':'show_all_users'}).encode('utf8')
 
 def admin_deleteUser(userID:int):
-    return json.dumps({'control':'delete_user','content':userID})
+    return json.dumps({'control':'delete_user','content':userID}).encode('utf8')
