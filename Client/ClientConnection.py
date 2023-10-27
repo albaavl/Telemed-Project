@@ -14,4 +14,5 @@ class ClientConnection:
     def recvMsg(self,buffSize:int):
         return self.socket.recv(buffSize)
 
-    
+    def logOut(self):
+        self.socket.close()

@@ -54,7 +54,7 @@ def clinician_addComments(reportID:int, comments:str):
 #Admin only
 
 def admin_createUser(name:str, psw:bytes, type:int):
-    userData=(name,psw,type)
+    userData=(name,psw,type)    
     return pickle.dumps({'control':'add_user','content':userData})
 
 def admin_showAllUsers():
