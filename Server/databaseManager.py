@@ -8,10 +8,10 @@ class Manager:
         self.cursor = self.connection.cursor()
         if self.cursor.execute('SELECT name FROM sqlite_master').fetchone() is None:
             self.cursor.execute("CREATE TABLE users(" +
-                                "userId INTEGER PRIMARY KEY ON DELETE CASCADE NOT NULL AUTOINCREMENT," +
+                                "userId INTEGER PRIMARY KEY NOT NULL," +
                                 "username TEXT NOT NULL," +
-                                "password BLOB NOT NULL)" +
-                                "userType TEXT NOT NULL,")
+                                "password BLOB NOT NULL," +
+                                "userType TEXT NOT NULL)")
 
             self.cursor.execute('CREATE TABLE reports(id INTEGER PRIMARY KEY AUTOINCREMENT, '
                                 'patient_id INTEGER REFERENCES users(userId) ON UPDATE CASCADE ON DELETE SET NULL,'
@@ -22,8 +22,8 @@ class Manager:
 
 
     #devuelve el userType en caso de existir el usuario y contraseña y si no existe devuelve excepcion
-    def checkUser(self,username:str,password):
-        self.cursor.execute("SELECT userType FROM users WHERE username=? AND password=?", username, password)
+    def checkUser(self,username:str,password =b'admin'):
+        self.cursor.execute("SELECT userType FROM users WHERE username=? AND password=?", (username, password))
         user_type = self.cursor.fetchone()
         #tiene que devolver solo el tipo de usuario que es y si no esta en la tabla lanzar una excepcion
         if user_type:
@@ -83,7 +83,7 @@ class Manager:
         except Exception as e:
             raise ValueError(f"Failed to update comments")
 
-    def generatePswHash(password:str):
+    def generatePswHash(self,password:str):
         hashgen = hashlib.sha512()
         hashgen.update(password.encode('utf8'))
         return hashgen.digest()

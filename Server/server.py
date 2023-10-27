@@ -5,6 +5,8 @@ class myServer:
     def __init__(self, ip_port=("0.0.0.0",1111)):
         self.address = ip_port
         self.sockets = []
+        self.dbManager = db.Manager()
+
 
     def startServer(self):
         socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
@@ -12,6 +14,7 @@ class myServer:
         self.sockets[0].setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sockets[0].bind(self.address)
         self.sockets[0].listen(5)
+        
         print('Server up!')
 
     def listen(self):
@@ -52,31 +55,31 @@ class myServer:
             content = dic_message['content']
             if len(content) < 2: #in case there is no bitalino reading in the report
                 content.append(None)
-            db.Manager.new_report(content[0], content[1])
+            self.dbManager.new_report(content[0], content[1])
             print('adding new report')
             csocket.send(json.dumps({'control': 'success', 'content': 'Success: report added to database'}))
         elif dic_message['control'] == 'show_patients':
-            patientList = db.Manager.get_patients()
+            patientList = self.dbManager.get_patients()
             print('getting patients from db')
             csocket.send(json.dumps({'control': 'success', 'content': patientList}))
         elif dic_message['control']=='show_reports':
             #the content of the dic is the user_id of the patient
-            reports = db.Manager.get_reports(dic_message['content'])
+            reports = self.dbManager.get_reports(dic_message['content'])
             print('getting reports from db')
             csocket.send(json.dumps({'control': 'success', 'content': reports}))
         elif dic_message['control'] == 'add_comments':
             #the content of the dic is the report_id
-            db.Manager.add_comments(dic_message['content'])
+            self.dbManager.add_comments(dic_message['content'])
             print('adding comments to db')
             csocket.send(json.dumps({'control': 'success', 'content': 'New comments successfully added to the report'}))
         elif dic_message['control'] == 'add_user':
             username, password, userType = dic_message['content'][0],dic_message['content'][1], dic_message['content'][2]
-            db.Manager.createUser(username, password, userType)
+            self.dbManager.createUser(username, password, userType)
             print('adding user to db')
             csocket.send(json.dumps({'control': 'success', 'content': 'New user successfully added'}))
         elif dic_message['control'] == 'delete_user':
             #the content of the dic is the user_id
-            db.Manager.deleteUser(dic_message['content'])
+            self.dbManager.deleteUser(dic_message['content'])
             print('Deleting user')
             csocket.send(json.dumps({'control': 'success', 'content': 'User deleted successfully'}))
         elif dic_message['control'] == 'login':
@@ -84,7 +87,7 @@ class myServer:
             userpass = dic_message['content']
             username = userpass[0]
             password = userpass[1]
-            userType = db.Manager.checkUser(username, password)
+            userType = self.dbManager.checkUser(username, password)
             print('logging in new client')
             csocket.send(json.dumps({'control': 'success', 'content': userType}))
 
