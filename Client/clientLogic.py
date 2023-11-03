@@ -21,17 +21,23 @@ def decodeServerResponse(query:bytes):
 
 #Patient Only    
 
-# def patient_connectToBitalino(mac:str) -> (list,False):
-#     '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
-#     os_stream=resolve_stream("type", mac) #TODO CHANGE TYPE FOR THE ACTUAL DATA TYPE WE'RE OBTAINING
-#     if os_stream is None: return False
-#     inlet=StreamInlet(os_stream[0])
-#     data=[]
-#     while True:
-#         samples,timestamp= inlet.pull_sample()
-#         if (samples,timestamp) is (None,None): break
-#         data.append("("+timestamp+","+samples+")")
-#     return data
+def patient_connectToBitalino(mac:str) -> (list,False):
+    '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
+
+    # Start the Java Virtual Machine (JVM)
+    jpype.startJVM(jpype.getDefaultJVMPath())
+
+    # Load the Java class
+    bitalino = jpype.JClass('bitalinocutre')
+
+    data=bitalino.dothethingy(mac,10)
+    print(data)
+    # Shutdown the JVM
+    jpype.shutdownJVM()
+
+
+    data=list()
+    return data
     
 
 def patient_sendParams(patientInput:str, clientId:int, params:list=None):
