@@ -11,7 +11,7 @@ def runClient():
         try:
             n,p=I.logIn()
             c.sendMsg(L.sendLoginCredentials(n,L.generatePswHash(p)))
-            clientType = L.decodeServerResponse(c.recvMsg(2048))
+            clientType,clientId = L.decodeServerResponse(c.recvMsg(2048))
             if clientType in (None, 'wrongUserPassword'): I.wrongLogIn()
             elif clientType == 'clinician':
                 while True:
@@ -88,9 +88,10 @@ def runClient():
                                 L.patient_connectToBitalino(I.patient_askForBitalinoMAC())
                                 params=None
                                 #TODO añadir control de error si no hay conexion correcta y guardar datos bitalino
-                                c.sendMsg(L.generateParamsQuery(symptoms,params)) 
-                            else: c.sendMsg(L.generateParamsQuery(symptoms)) 
-                            if L.decodeQuery(c.recvMsg(2048)) in (None,'error?????'): I.patient_errorWithParams() #TODO replace placeholder error
+                                c.sendMsg(L.patient_sendParams(symptoms,params,clientId)) 
+                            else:
+                                c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
+                            if L.decodeServerResponse(c.recvMsg(2048)) in (None,'error?????'): I.patient_errorWithParams() #TODO replace placeholder error
                             else: I.success()
                         case 2:
                             c.logOut()

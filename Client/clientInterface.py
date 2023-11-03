@@ -59,8 +59,8 @@ def patient_askForParameters():
     while True:
         os.system("cls")
         i=input("Would you like to record parameters with your bitalino device? (y/n)")
-        if i.capitalize in ("YES","Y","SI","S"): return True
-        elif i.capitalize in ("NO", "N"): return False
+        if i.capitalize() in ("YES","Y","SI","S"): return True
+        elif i.capitalize() in ("NO", "N"): return False
 
 
 def patient_errorWithParams():

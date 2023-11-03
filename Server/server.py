@@ -1,5 +1,5 @@
 import socket, select, pickle, json, databaseManager as db
-
+from datetime import date
 
 class myServer:
     def __init__(self, ip_port=("0.0.0.0",1111)):
@@ -37,7 +37,8 @@ class myServer:
         if not message:
             self.disconnectClient(csocket)
         else:
-            dic_message = pickle.loads(message)
+            try: dic_message = json.loads(message)
+            except UnicodeDecodeError: dic_message = pickle.loads(message)
             print(dic_message)
             if not dic_message:
                 print('Disconnected')
@@ -53,9 +54,9 @@ class myServer:
         elif dic_message['control'] == 'new_report':
             #receives a list 1st element = symptoms and 2nd = bitalino
             content = dic_message['content']
-            if len(content) < 2: #in case there is no bitalino reading in the report
+            if len(content) < 3: #in case there is no bitalino reading in the report
                 content.append(None)
-            self.dbManager.new_report(content[0], content[1])
+            self.dbManager.new_report(content[0],content[1], content[2], date.today())
             print('adding new report')
             csocket.send(json.dumps({'control': 'success', 'content': 'Success: report added to database'}).encode('utf8'))
         elif dic_message['control'] == 'show_patients':
@@ -87,9 +88,9 @@ class myServer:
             userpass = dic_message['content']
             username = userpass[0]
             password = userpass[1]
-            userType = self.dbManager.checkUser(username, password)
+            (userType,userId) = self.dbManager.checkUser(username, password)
             print('logging in new client')
-            csocket.send(json.dumps({'control': 'success', 'content': userType}).encode('utf8'))
+            csocket.send(json.dumps({'control': 'success', 'content': (userType,userId)}).encode('utf8'))
 
     def disconnectClient(self, csocket):
        csocket.close()
@@ -97,6 +98,8 @@ class myServer:
        print('Client out!')
        
 if __name__ == "__main__": 
-    server = myServer()
-    server.startServer()
-    server.listen()
+    try:
+        server = myServer()
+        server.startServer()
+        server.listen()
+    except: pass

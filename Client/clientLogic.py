@@ -34,9 +34,9 @@ def decodeServerResponse(query:bytes):
 #     return data
     
 
-def patient_sendParams(patientInput:str, params:list=None):
+def patient_sendParams(patientInput:str, clientId:int, params:list=None):
     '''`Content:` list [patientInput(String),params(list)]'''    
-    inputData=[patientInput,]
+    inputData=[clientId,patientInput,]
     if params != None: inputData.append(params)
     return json.dumps({'control':'new_report','content':inputData}).encode('utf8')
 
