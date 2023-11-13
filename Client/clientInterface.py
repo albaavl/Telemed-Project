@@ -135,9 +135,9 @@ def admin_addUser():
     while True:
         t=input("User type (Admin/Clinician/Patient): ")
         t=t.capitalize()
-        if t in ("ADMIN", "A"): return (name, psw, "admin")
-        elif t in ( "CLINICIAN", "C"): return (name, psw, "clinician")
-        elif t in ("PATIENT", "P"): return (name, psw, "patient")
+        if t in ("Admin", "A"): return (name, psw, "admin")
+        elif t in ( "Clinician", "C"): return (name, psw, "clinician")
+        elif t in ("Patient", "P"): return (name, psw, "patient")
         else: 
             print("Invalid user type, please use Admin/A, Clinician/C or Patient/P")
             input("Press intro to continue...")

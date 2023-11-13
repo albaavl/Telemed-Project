@@ -1,4 +1,4 @@
-import hashlib, json, pickle
+import hashlib, json, pickle, os
 # from pylsl import StreamInlet, resolve_stream
 
 
@@ -24,17 +24,9 @@ def decodeServerResponse(query:bytes):
 def patient_connectToBitalino(mac:str) -> (list,False):
     '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
 
-    # Start the Java Virtual Machine (JVM)
-    jpype.startJVM(jpype.getDefaultJVMPath())
+    os.system("bitalino.jar "+mac)
 
-    # Load the Java class
-    bitalino = jpype.JClass('bitalinocutre')
-
-    data=bitalino.dothethingy(mac,10)
-    print(data)
-    # Shutdown the JVM
-    jpype.shutdownJVM()
-
+    
 
     data=list()
     return data
@@ -59,8 +51,8 @@ def clinician_addComments(reportID:int, comments:str):
 
 #Admin only
 
-def admin_createUser(name:str, psw:bytes, type:int):
-    userData=(name,psw,type)    
+def admin_createUser(name:str, psw:bytes, userType:str):
+    userData=(name,psw,userType)    
     return pickle.dumps({'control':'add_user','content':userData})
 
 def admin_showAllUsers():
