@@ -1,4 +1,6 @@
 import hashlib, json, pickle, os
+import socket
+# import jpype1
 # from pylsl import StreamInlet, resolve_stream
 
 
@@ -21,14 +23,27 @@ def decodeServerResponse(query:bytes):
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str) -> (list,False):
-    '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
-
-    os.system("bitalino.jar "+mac)
-
-    
+def patient_connectToBitalino(mac:str="20:17:11:20:51:54", iterations:int=10) -> (list):
 
     data=list()
+    sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+    sck.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    os.system("bitalino.jar "+mac+" "+iterations)
+
+    sck.connect(('127.0.0.1',50500))
+
+    while(True):
+        dataIn = sck.recv(2048)
+        if dataIn== b'':    break
+        stringIn=dataIn.decode('utf8')
+        stringIn=stringIn.split(" ")
+        
+        for string in stringIn:
+            data.append(string)
+
+    sck.close()
+
     return data
     
 

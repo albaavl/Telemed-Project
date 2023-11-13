@@ -36,7 +36,7 @@
 
   */
 
-package bitalino;
+package src;
 
 import java.io.IOException;
 import java.io.DataInputStream;
@@ -47,7 +47,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 
 
-import bitalino.DeviceDiscoverer;
+import src.DeviceDiscoverer;
 
 /// The %BITalino device class.
 public class BITalino {
