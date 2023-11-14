@@ -1,4 +1,4 @@
-import hashlib, json, pickle, os
+import hashlib, json, pickle, os, threading
 import socket
 # import jpype1
 # from pylsl import StreamInlet, resolve_stream
@@ -23,13 +23,14 @@ def decodeServerResponse(query:bytes):
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str="20:17:11:20:51:54", iterations:int=10) -> (list):
+def patient_connectToBitalino(mac:str="20:17:11:20:51:54", iterations:str="10") -> (list):
 
     data=list()
     sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
     sck.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    os.system("bitalino.jar "+mac+" "+iterations)
+    chapuza = threading.Thread(target=patient_chapuza, args=(mac,iterations), daemon=True)
+    chapuza.start()
 
     sck.connect(('127.0.0.1',50500))
 
@@ -45,7 +46,10 @@ def patient_connectToBitalino(mac:str="20:17:11:20:51:54", iterations:int=10) ->
     sck.close()
 
     return data
-    
+
+def patient_chapuza(mac:str, iterations:str):
+    os.system("java -jar --enable-preview Client/bitalino.jar "+mac+" "+iterations)
+
 
 def patient_sendParams(patientInput:str, clientId:int, params:list=None):
     '''`Content:` list [patientInput(String),params(list)]'''    
