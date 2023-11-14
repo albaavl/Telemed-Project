@@ -11,8 +11,11 @@ def runClient():
         # try:
             n,p=I.logIn()
             c.sendMsg(L.sendLoginCredentials(n,L.generatePswHash(p)))
-            clientType,clientId = L.decodeServerResponse(c.recvMsg(2048))
-            if clientType in (None, 'wrongUserPassword'): I.wrongLogIn()
+            serverResponse = L.decodeServerResponse(c.recvMsg(2048))
+            if serverResponse.__class__== tuple and serverResponse.__len__()==2: clientType,clientId = serverResponse
+            else: clientType = None
+
+            if clientType == None: I.wrongLogIn()
             elif clientType == 'clinician':
                 while True:
                     match I.clinician_mainMenu():
