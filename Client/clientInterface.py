@@ -12,10 +12,12 @@ def logIn():
     return username,password
 
 
-def wrongLogIn():
+def wrongLogIn(error):
     '''Wrong username/password combination'''
     os.system('cls' if os.name=='nt' else 'clear')
-    print("Wrong username or password, please try again.")
+    for e in error:
+        print(e)
+    # print("Wrong username or password, please try again.")
     input("Press enter to continue...")
 
 def success():
