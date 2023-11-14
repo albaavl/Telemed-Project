@@ -24,16 +24,16 @@ def runClient():
                             else:
                                 '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
                                 patientID = I.clinician_showPatients(patientList)
+                                print(patientID)
                                 c.sendMsg(L.clinician_requestPatientReports(patientID))
                                 patientReports = L.decodeServerResponse(c.recvMsg(2048))
                                 if patientReports in (None,'huh'):
                                     I.clinician_errorWithPatients()
                                 else:
                                     report = I.clinician_showPatientReports(patientReports)
+                                
                                     I.showSelectedReport(report)
-                        case 2: #Add comment to a report
-                            #HAY UNA COCHINADA DE CODIGO REDUNDANTE, QUEDA PENDIENTE HACER UN REFACTOR
-                            # Y UBICARME RESPECTO A LA ESTRUCTURA DEL REPORT
+                        case 2: 
 
                             c.sendMsg(L.clinician_requestPatientsList())
                             patientList = L.decodeServerResponse(c.recvMsg(2048))

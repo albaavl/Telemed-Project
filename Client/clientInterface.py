@@ -92,18 +92,16 @@ def clinician_showPatientReports(reports: list):
     '''Shows the data of the patient in the terminal, returns the selected report'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available reports:")
-    print(reports)
-    opt=int(input("Please select one option: "))
-    return opt
+    for i in range(len(reports)):
+        print(reports[i])
+    opt=int(input("Please select one report: "))
+    return reports[opt]
 
-def showSelectedReport(report: list):
+def clinician_showSelectedReport(report: list):
     '''Shows the data of the selected report in the terminal'''
     #No tengo muy claro como esta estructurado el contenido del reporte, asi que lo dejo como lista por si acaso
     print("Report data:")
-    print("  Date: "+report[0])
-    print("  Symptoms: "+report[1])
-    print("  Signal: "+report[2])
-    print("  Comments: "+report[3])
+    print(report)
 
 def clinician_errorWithPatients():
     print('Something went wrong while getting the information from the server. Please try again later.')
