@@ -107,5 +107,5 @@ if __name__ == "__main__":
     while True:
         try:
             server.listen()
-        except ValueError as e:
+        except Exception as e:
             print(e)
