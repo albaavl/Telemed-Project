@@ -30,7 +30,7 @@ def runClient():
                                 # I.showSelectedReport(report)
                                 
                                 
-                               
+                                I.showSelectedReport(report)
                                 if patientReports in (None,'huh'):
                                     I.clinician_errorWithPatients()
                                 else:
