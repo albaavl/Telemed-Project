@@ -1,4 +1,4 @@
-package src;
+//package src;
 
 /// A frame returned by BITalino.read()
 public class Frame {

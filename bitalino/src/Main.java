@@ -1,4 +1,4 @@
-package src;
+//package src;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -39,6 +39,7 @@ public class Main {
 
         SocketChannel s=null;
         try {
+            setUpSocket();
             s = serverSocket.accept();
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -59,9 +60,6 @@ public class Main {
             int[] channelsToAcquire = {1,};
             bitalino.start(channelsToAcquire);
         
-
-            setUpSocket();
-
 
             int block_size=10;
                 // Param1[block_size*sample_iterations] == [param(0), param(1), param(2), ..., param(99999999)]
