@@ -17,13 +17,14 @@ def decodeServerResponse(query:bytes):
     try:
         response=json.loads(query)
         if not response: return None
-        if response['control'] in ('success','error'): return response['content']
+        if response['control'] == 'success': return response['content']
+        elif response['control'] == 'error': return (response['content'],)
         else:return None
     except Exception: return None
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str="20:17:11:20:51:54", iterations:str="10") -> (list):
+def patient_connectToBitalino(mac:str="20:16:07:18:17:85", iterations:str="10") -> (list):
 
     data=list()
     sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
@@ -75,7 +76,7 @@ def admin_createUser(name:str, psw:bytes, userType:str):
     return pickle.dumps({'control':'add_user','content':userData})
 
 def admin_showAllUsers():
-    return json.dumps({'control':'show_all_users'}).encode('utf8')
+    return json.dumps({'control':'show_users'}).encode('utf8')
 
-def admin_deleteUser(userID:int):
+def admin_deleteUser(userID:int=999):
     return json.dumps({'control':'delete_user','content':userID}).encode('utf8')

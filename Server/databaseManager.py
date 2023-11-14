@@ -47,7 +47,7 @@ class Manager:
         #devolver algo si se ha añadido bien, maybe un true?
 
     def deleteUser(self, userId:int):
-        self.cursor.execute("DELETE * FROM users WHERE userId = ?",(userId,))
+        self.cursor.execute("DELETE FROM users WHERE userId = ?",(userId,))
         #lo mismo que en createUser, devolveria algo para hacer el check de que t o d o guay
         #no hay forma de checkear que ha ido bien porque lo unico que linkea es userId y una vez
         #que se borra hace cascada y es reutilizada por otro user

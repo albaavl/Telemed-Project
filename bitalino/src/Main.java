@@ -51,8 +51,6 @@ public class Main {
 
     
         try{
-            macAddress = "20:17:11:20:51:54"; //TODO remove this
-            iterations = 10;
             
             int SamplingRate = 10;
             bitalino.open(macAddress, SamplingRate);
