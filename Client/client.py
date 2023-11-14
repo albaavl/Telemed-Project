@@ -11,8 +11,11 @@ def runClient():
         # try:
             n,p=I.logIn()
             c.sendMsg(L.sendLoginCredentials(n,L.generatePswHash(p)))
-            clientType,clientId = L.decodeServerResponse(c.recvMsg(2048))
-            if clientType in (None, 'wrongUserPassword'): I.wrongLogIn()
+            serverResponse = L.decodeServerResponse(c.recvMsg(2048))
+            if serverResponse.__class__== tuple and serverResponse.__len__()==2: clientType,clientId = serverResponse
+            else: clientType = None
+
+            if clientType == None: I.wrongLogIn()
             elif clientType == 'clinician':
                 while True:
                     match I.clinician_mainMenu():
@@ -69,19 +72,23 @@ def runClient():
                             username, psw, usertype = I.admin_addUser()
                             psw = L.generatePswHash(psw)
                             c.sendMsg(L.admin_createUser(username,psw,usertype))
-                            serverResponse=L.decodeServerResponse(c.recvMsg(2048))
-                            if serverResponse in (None,'huh'): I.admin_failedUserCreation() #TODO replace placeholder error
+                            serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                            if serverResponse.__class__ == tuple: I.admin_failedUserCreation(serverResponse[0]) #TODO replace placeholder error
                         case 2: #Delete user
                             c.sendMsg(L.admin_showAllUsers())
                             serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                            print(serverResponse)
-                            # while True:
-                            #     usrID=I.admin_selectUser()
-                            #     #TODO check if the user is valid
-                            #     c.sendMsg(L.admin_deleteUser(usrID))
-                            #     break
-                            # serverResponse=L.decodeServerResponse(c.recvMsg(2048))
-                            # if serverResponse in (None,'huh'): I.admin_failedUserCreation() #TODO replace placeholder error
+                            if serverResponse.__class__ == list:
+
+                                while True:
+                                    usrID=I.admin_selectUser(serverResponse)
+                                    c.sendMsg(L.admin_deleteUser(usrID))
+                                    break
+                                if serverResponse.__class__ == tuple: I.admin_failedUserCreation() #TODO replace placeholder error
+                                serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                                print(serverResponse)
+                                input("Press enter to go back to menu...")
+                            else:
+                                input("Something went wrong. Press intro to go back to main menu...")
                         case 3: #Log out
                             c.logOut()
                             raise SystemExit
@@ -94,12 +101,11 @@ def runClient():
                             if I.patient_askForParameters():
                                 params=L.patient_connectToBitalino()
                                 
-                                
-                                
                                 c.sendMsg(L.patient_sendParams(symptoms,params,clientId)) 
                             else:
                                 c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
-                            if L.decodeServerResponse(c.recvMsg(2048)) in (None,'error?????'): I.patient_errorWithParams() #TODO replace placeholder error
+                                serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                            if serverResponse.__class__ == tuple: I.patient_errorWithParams(serverResponse[0]) #TODO replace placeholder error
                             else: I.success()
                         case 2:
                             c.logOut()

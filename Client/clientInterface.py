@@ -64,8 +64,9 @@ def patient_askForParameters():
         elif i.capitalize() in ("NO", "N"): return False
 
 
-def patient_errorWithParams():
+def patient_errorWithParams(error):
     print('Something went wrong while sending data to the server. Please try again later.')
+    print(error)
     input("Press enter to go back into main menu...")
 
 #Clinician only
@@ -155,8 +156,10 @@ def admin_addUser():
             print("Invalid user type, please use Admin/A, Clinician/C or Patient/P")
             input("Press intro to continue...")
 
-def admin_failedUserCreation():
-    pass
+def admin_failedUserCreation(error):
+    print(error)
+    input("shiet")
 
-def admin_selectUser():
-    pass
+def admin_selectUser(lst:list):
+    print(lst)
+    return input("Please introduce an user id to delete: ")
