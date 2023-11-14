@@ -48,7 +48,7 @@ class myServer:
                 self.decode_message(dic_message,csocket)
 
     def decode_message(self,dic_message,csocket):
-        possible_controls = ['new_report','show_patients','show_reports','add_comments','add_user','delete_user','login']
+        possible_controls = ['new_report','show_patients','show_reports', 'show_users','add_comments','add_user','delete_user','login']
         if dic_message['control'] not in possible_controls:
             csocket.send(json.dumps({'control': 'error', 'content':'Error: format not understood'}).encode('utf8'))
         elif dic_message['control'] == 'new_report':
@@ -63,6 +63,10 @@ class myServer:
             patientList = self.dbManager.get_patients()
             print('getting patients from db')
             csocket.send(json.dumps({'control': 'success', 'content': patientList}).encode('utf8'))
+        elif dic_message['control'] == 'show_patients':
+            usersList = self.dbManager.get_users()
+            print('getting users from db')
+            csocket.send(json.dumps({'control': 'success', 'content': usersList}).encode('utf8'))
         elif dic_message['control']=='show_reports':
             #the content of the dic is the user_id of the patient
             reports = self.dbManager.get_reports(dic_message['content'])
@@ -97,9 +101,11 @@ class myServer:
        self.sockets.remove(csocket)
        print('Client out!')
        
-if __name__ == "__main__": 
-    try:
-        server = myServer()
-        server.startServer()
-        server.listen()
-    except: pass
+if __name__ == "__main__":
+    server = myServer()
+    server.startServer()
+    while True:
+        try:
+            server.listen()
+        except ValueError as e:
+            print(e)
