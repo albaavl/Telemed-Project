@@ -66,6 +66,15 @@ class Manager:
             return patients
         except Exception as e:
             raise ValueError(f"Failed to retrieve the list of patients")
+    
+    def get_users(self):
+        #que devuelva una lista con todos los usuarios (userdID, username, userType), error si no hay con explicacion
+        try:
+            self.cursor.execute("SELECT userId, username, userType FROM users")
+            users = self.cursor.fetchall()
+            return users
+        except Exception as e:
+            raise ValueError(f"Failed to retrieve the list of users")
 
     def get_reports(self, patientId):
         #que devuelva una lista con todos los reports del paciente (todos los parametros), error si no hay con explicacion
