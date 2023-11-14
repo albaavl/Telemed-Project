@@ -1,4 +1,6 @@
-import hashlib, json, pickle
+import hashlib, json, pickle, os
+import socket
+# import jpype1
 # from pylsl import StreamInlet, resolve_stream
 
 
@@ -21,17 +23,28 @@ def decodeServerResponse(query:bytes):
 
 #Patient Only    
 
-# def patient_connectToBitalino(mac:str) -> (list,False):
-#     '''Returns a `list` with all data received from the Bitalino, data is stored as a `str`"(timestamp,sample)"'''
-#     os_stream=resolve_stream("type", mac) #TODO CHANGE TYPE FOR THE ACTUAL DATA TYPE WE'RE OBTAINING
-#     if os_stream is None: return False
-#     inlet=StreamInlet(os_stream[0])
-#     data=[]
-#     while True:
-#         samples,timestamp= inlet.pull_sample()
-#         if (samples,timestamp) is (None,None): break
-#         data.append("("+timestamp+","+samples+")")
-#     return data
+def patient_connectToBitalino(mac:str="20:17:11:20:51:54", iterations:int=10) -> (list):
+
+    data=list()
+    sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+    sck.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    os.system("bitalino.jar "+mac+" "+iterations)
+
+    sck.connect(('127.0.0.1',50500))
+
+    while(True):
+        dataIn = sck.recv(2048)
+        if dataIn== b'':    break
+        stringIn=dataIn.decode('utf8')
+        stringIn=stringIn.split(" ")
+        
+        for string in stringIn:
+            data.append(string)
+
+    sck.close()
+
+    return data
     
 
 def patient_sendParams(patientInput:str, clientId:int, params:list=None):
@@ -53,8 +66,8 @@ def clinician_addComments(reportID:int, comments:str):
 
 #Admin only
 
-def admin_createUser(name:str, psw:bytes, type:int):
-    userData=(name,psw,type)    
+def admin_createUser(name:str, psw:bytes, userType:str):
+    userData=(name,psw,userType)    
     return pickle.dumps({'control':'add_user','content':userData})
 
 def admin_showAllUsers():

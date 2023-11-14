@@ -67,14 +67,15 @@ def runClient():
                             if serverResponse in (None,'huh'): I.admin_failedUserCreation() #TODO replace placeholder error
                         case 2: #Delete user
                             c.sendMsg(L.admin_showAllUsers())
-                            #TODO Show all users
-                            while True:
-                                usrID=I.admin_selectUser()
-                                #TODO check if the user is valid
-                                c.sendMsg(L.admin_deleteUser(usrID))
-                                break
-                            serverResponse=L.decodeServerResponse(c.recvMsg(2048))
-                            if serverResponse in (None,'huh'): I.admin_failedUserCreation() #TODO replace placeholder error
+                            serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                            print(serverResponse)
+                            # while True:
+                            #     usrID=I.admin_selectUser()
+                            #     #TODO check if the user is valid
+                            #     c.sendMsg(L.admin_deleteUser(usrID))
+                            #     break
+                            # serverResponse=L.decodeServerResponse(c.recvMsg(2048))
+                            # if serverResponse in (None,'huh'): I.admin_failedUserCreation() #TODO replace placeholder error
                         case 3: #Log out
                             c.logOut()
                             raise SystemExit
@@ -85,8 +86,8 @@ def runClient():
                         case 1:
                             symptoms=I.patient_askForSymptoms()
                             if I.patient_askForParameters():
-                                L.patient_connectToBitalino(I.patient_askForBitalinoMAC())
-                                params=None
+                                params=L.patient_connectToBitalino(I.patient_askForBitalinoMAC())
+                                
                                 #TODO añadir control de error si no hay conexion correcta y guardar datos bitalino
                                 c.sendMsg(L.patient_sendParams(symptoms,params,clientId)) 
                             else:
