@@ -98,7 +98,7 @@ class myServer:
                 csocket.send(json.dumps({'control': 'success', 'content': (userType,userId)}).encode('utf8'))
         except Exception as e:
             print(e)
-            csocket.send(json.dumps({'control': 'error', 'content': e}).encode('utf8'))
+            csocket.send(json.dumps({'control': 'error', 'content': e.args}).encode('utf8'))
 
     def disconnectClient(self, csocket):
        csocket.close()
