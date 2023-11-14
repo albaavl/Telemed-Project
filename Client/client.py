@@ -65,7 +65,7 @@ def runClient():
                                     serverResponse=L.decodeServerResponse(c.recvMsg(2048))
                                     if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
                                     else: I.success()
-                
+                    
             
             elif clientType == 'admin':
                 while True:
