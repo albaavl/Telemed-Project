@@ -63,7 +63,7 @@ class myServer:
             patientList = self.dbManager.get_patients()
             print('getting patients from db')
             csocket.send(json.dumps({'control': 'success', 'content': patientList}).encode('utf8'))
-        elif dic_message['control'] == 'show_patients':
+        elif dic_message['control'] == 'show_users':
             usersList = self.dbManager.get_users()
             print('getting users from db')
             csocket.send(json.dumps({'control': 'success', 'content': usersList}).encode('utf8'))
