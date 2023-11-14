@@ -1,10 +1,11 @@
 import os
 
+
 #Generic fn
 
 def logIn():
     '''Ask user username and password via terminal, returns (User, Password)'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("-- Welcome to our client App --")
     username = input("Please introduce your username: ")
     password = input("Please introduce your password: ")
@@ -13,7 +14,7 @@ def logIn():
 
 def wrongLogIn():
     '''Wrong username/password combination'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Wrong username or password, please try again.")
     input("Press enter to continue...")
 
@@ -22,7 +23,7 @@ def success():
     input("Press intro to go back into the main menu.")
 
 def wrongOption():
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("The chosen option is not valid.")
     input("Press enter to continue...")
 
@@ -30,18 +31,18 @@ def wrongOption():
 
 def patient_askForBitalinoMAC():
     '''Propmt for Bitalino MAC address in console, input is not checked.'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     return input("Please introduce the MAC address of your bitalino device: ")
 
 
 def patient_wrongMAC():
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("The MAC address introduced was wrong or the device could not be found.")
 
 
 def patient_mainMenu():
     '''Generates the main menu for the user, returns the option chosen by the user: 1-New medical report; 2-Logout'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1.Place a new medical report.")
     print("  2.Log out.")
@@ -50,14 +51,14 @@ def patient_mainMenu():
 
 def patient_askForSymptoms():
     '''Ask user via terminal for the symptoms, returns an unchecked string provided by the user'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     return input("Please introduce your symptoms below:\n")
 
 
 def patient_askForParameters():
     '''Ask user via terminal whether they want to record parameters or not, returns True/False'''
     while True:
-        os.system("cls")
+        os.system('cls' if os.name=='nt' else 'clear')
         i=input("Would you like to record parameters with your bitalino device? (y/n)")
         if i.capitalize() in ("YES","Y","SI","S"): return True
         elif i.capitalize() in ("NO", "N"): return False
@@ -71,7 +72,7 @@ def patient_errorWithParams():
 
 def clinician_mainMenu():
     '''Generates the main menu for the health expert, returns the option chosen by the user: 1-Show patients; 2-Show reports; 3-Add comment; 4-Logout'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1.Show patients.")
     print("  2.Show reports.")
@@ -81,7 +82,7 @@ def clinician_mainMenu():
 
 def clinician_showPatients(patients: list):
     '''Shows the list of patients in the terminal, returns the selected patient'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Available patients:")
     print(patients)
     opt=int(input("Please select one option: "))
@@ -89,10 +90,11 @@ def clinician_showPatients(patients: list):
 
 def clinician_showPatientReports(reports: list):
     '''Shows the data of the patient in the terminal, returns the selected report'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Available reports:")
+    print(reports)
     opt=int(input("Please select one option: "))
-    return reports[opt-1]
+    return opt
 
 def showSelectedReport(report: list):
     '''Shows the data of the selected report in the terminal'''
@@ -109,14 +111,14 @@ def clinician_errorWithPatients():
 
 def clinitian_addComment():
     '''Ask user via terminal for the comment, returns an unchecked string provided by the user'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     return input("Please introduce your comment below:\n")
 
 #Admin only
 
 def admin_mainMenu():
     '''Generates the main menu for the user, returns the option chosen by the user: 1-Add user; 2-Delete user; 3-Logout'''
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1.Create a new user.")
     print("  2.Delete selected user.")
@@ -124,7 +126,7 @@ def admin_mainMenu():
     return int(input("Please select one option: "))
 
 def admin_addUser():
-    os.system("cls")
+    os.system('cls' if os.name=='nt' else 'clear')
     print("--- Create new user ---")
     print("Leave name field empty to go back into main menu.")
     name=input("User name:")
