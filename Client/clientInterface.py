@@ -96,17 +96,26 @@ def clinician_showPatientReports(reports: list):
     print("Available reports:")
     for i in range(len(reports)):
         print(reports[i])
-    opt=int(input("Please select one report: "))
-    return reports[opt-1]
+    while True:
+        try:
+            opt = int(input("Please select one report (enter the corresponding number): "))
+            if 1 <= opt <= len(reports):
+                break
+            else:
+                print("Invalid selection. Please enter a valid number.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+    return reports[opt - 1]
+   
 
 def clinician_showSelectedReport(report: list):
     '''Shows the data of the selected report in the terminal'''
-    # os.system('cls' if os.name=='nt' else 'clear')
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Report data:")
     print(report)
-    input("Press enter to go back into main menu...")
-    # for i, item in enumerate(report, start=1):
-    #     print(f"{i}. {item}")
+    return input("Press enter to go back into main menu...")
+   
 
 def clinician_errorWithPatients():
     print('Something went wrong while getting the information from the server. Please try again later.')
