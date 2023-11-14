@@ -112,7 +112,9 @@ def clinician_errorWithPatients():
 def clinician_addComment():
     '''Ask user via terminal for the comment, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
-    return input("Please introduce your comment below:\n")
+    comment = input("Please introduce your comment below:\n")
+    return comment
+
 def clinician_failedCommentCreation():
     print('Something went wrong while sending data to the server. Please try again later.')
 

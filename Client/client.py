@@ -26,18 +26,18 @@ def runClient():
                                 patientID = I.clinician_showPatients(patientList)
                                 c.sendMsg(L.clinician_requestPatientReports(patientID))
                                 patientReports = L.decodeServerResponse(c.recvMsg(2048))
-                                report = I.clinician_showPatientReports(patientReports)
-                                
-                                
-                                
+                                # report = I.clinician_showPatientReports(patientReports)
                                 # I.showSelectedReport(report)
-                                # if patientReports in (None,'huh'):
-                                #     I.clinician_errorWithPatients()
-                                # else:
-                                    
-                                #     report = I.clinician_showPatientReports(patientReports)
                                 
-                                #     I.showSelectedReport(report)
+                                
+                               
+                                if patientReports in (None,'huh'):
+                                    I.clinician_errorWithPatients()
+                                else:
+                                    
+                                    report = I.clinician_showPatientReports(patientReports)
+                                
+                                    I.clinician_showSelectedReport(report)
                         case 2: 
 
                             c.sendMsg(L.clinician_requestPatientsList())
