@@ -65,7 +65,7 @@ def clinician_requestPatientsList():
 def clinician_requestPatientReports(patientID:int):
     return json.dumps({'control':'show_reports','content':patientID}).encode('utf8')
 
-def clinician_addComments(reportID:int, comments:str):
+def clinician_addCommentToReport(reportID:int, comments:str):
     return json.dumps({'control':'add_comments','content':[reportID,comments]}).encode('utf8')
 
 #Admin only
