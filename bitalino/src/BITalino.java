@@ -36,7 +36,7 @@
 
   */
 
-package src;
+//package src;
 
 import java.io.IOException;
 import java.io.DataInputStream;
@@ -46,8 +46,6 @@ import javax.bluetooth.RemoteDevice;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 
-
-import src.DeviceDiscoverer;
 
 /// The %BITalino device class.
 public class BITalino {

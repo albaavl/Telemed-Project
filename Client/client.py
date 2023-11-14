@@ -86,9 +86,10 @@ def runClient():
                         case 1:
                             symptoms=I.patient_askForSymptoms()
                             if I.patient_askForParameters():
-                                params=L.patient_connectToBitalino(I.patient_askForBitalinoMAC())
+                                params=L.patient_connectToBitalino()
                                 
-                                #TODO añadir control de error si no hay conexion correcta y guardar datos bitalino
+                                
+                                
                                 c.sendMsg(L.patient_sendParams(symptoms,params,clientId)) 
                             else:
                                 c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
