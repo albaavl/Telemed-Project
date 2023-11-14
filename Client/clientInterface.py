@@ -83,17 +83,14 @@ def clinician_showPatients(patients: list):
     '''Shows the list of patients in the terminal, returns the selected patient'''
     os.system("cls")
     print("Available patients:")
-    for i in range(len(patients)):
-        print("  "+str(i+1)+". "+patients[i])
+    print(patients)
     opt=int(input("Please select one option: "))
-    return opt-1
+    return opt
 
 def clinician_showPatientReports(reports: list):
     '''Shows the data of the patient in the terminal, returns the selected report'''
     os.system("cls")
     print("Available reports:")
-    for i in range(len(reports)):
-        print("  "+str(i+1)+". "+reports[i])
     opt=int(input("Please select one option: "))
     return reports[opt-1]
 
