@@ -53,7 +53,7 @@ class Manager:
         #que se borra hace cascada y es reutilizada por otro user
         return True #pongo esto para que Alba esté contenta :))        
 
-    def new_report(self, patient_id, symptoms, paramBitalino, date, HpComments="hakuna matata"):
+    def new_report(self, patient_id, symptoms, paramBitalino, date, HpComments= None):
         self.cursor.execute("INSERT INTO reports (patient_id, date, symptoms, paramBitalino, HpComments) VALUES (?, ?, ?, ?, ?)",
                             (patient_id,date,symptoms, paramBitalino, HpComments))
         self.connection.commit()

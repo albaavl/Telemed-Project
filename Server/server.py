@@ -33,7 +33,7 @@ class myServer:
         print(direction_client)
 
     def read_message(self, csocket):
-        message = csocket.recv(1024)
+        message = csocket.recv(8096)
         if not message:
             self.disconnectClient(csocket)
         else:

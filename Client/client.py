@@ -102,8 +102,7 @@ def runClient():
                             symptoms=I.patient_askForSymptoms()
                             if I.patient_askForParameters():
                                 params=L.patient_connectToBitalino()
-                                
-                                c.sendMsg(L.patient_sendParams(symptoms,params,clientId)) 
+                                c.sendMsg(L.patient_sendParams(symptoms, clientId, params))
                             else:
                                 c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
                                 serverResponse=L.decodeServerResponse(c.recvMsg(8192))

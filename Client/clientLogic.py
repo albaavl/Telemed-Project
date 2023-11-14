@@ -1,7 +1,9 @@
-import hashlib, json, pickle, os, threading
-import socket
-# import jpype1
-# from pylsl import StreamInlet, resolve_stream
+import hashlib, json, pickle, os
+import time
+
+from bitalino import BITalino as bit
+
+
 
 
 def generatePswHash(password:str):
@@ -24,32 +26,30 @@ def decodeServerResponse(query:bytes):
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str="20:16:07:18:17:85", iterations:str="10") -> (list):
-
-    data=list()
-    sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    sck.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    chapuza = threading.Thread(target=patient_chapuza, args=(mac,iterations), daemon=True)
-    chapuza.start()
-
-    sck.connect(('127.0.0.1',50500))
-
-    while(True):
-        dataIn = sck.recv(2048)
-        if dataIn== b'':    break
-        stringIn=dataIn.decode('utf8')
-        stringIn=stringIn.split(" ")
-        
-        for string in stringIn:
-            data.append(string)
-
-    sck.close()
-
+def patient_connectToBitalino(mac:str="20:16:07:18:17:85", running_time = 5) -> (list):
+    acqChannels = [2]
+    samplingRate = 1000
+    nSamples = 10
+    digitalOutput_on = [1, 1]
+    digitalOutput_off = [0, 0]
+    # Connect to BITalino
+    device = bit(mac)
+    device.start(samplingRate, acqChannels)
+    start = time.time()
+    end = time.time()
+    data = ''
+    device.trigger(digitalOutput_on)
+    while (end - start) < running_time:
+        # Read samples
+        data += str(device.read(nSamples))
+        end = time.time()
+    # Turn BITalino led and buzzer off
+    device.trigger(digitalOutput_off)
+    # Stop acquisition
+    device.stop()
+    # Close connection
+    device.close()
     return data
-
-def patient_chapuza(mac:str, iterations:str):
-    os.system("java -jar --enable-preview Client/bitalino.jar "+mac+" "+iterations)
 
 
 def patient_sendParams(patientInput:str, clientId:int, params:list=None):
