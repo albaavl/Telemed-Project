@@ -8,7 +8,7 @@ def runClient():
     c = ClientConnection.ClientConnection()
 
     while True:
-        try:
+        # try:
             n,p=I.logIn()
             c.sendMsg(L.sendLoginCredentials(n,L.generatePswHash(p)))
             clientType,clientId = L.decodeServerResponse(c.recvMsg(2048))
@@ -24,15 +24,20 @@ def runClient():
                             else:
                                 '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
                                 patientID = I.clinician_showPatients(patientList)
-                                print(patientID)
                                 c.sendMsg(L.clinician_requestPatientReports(patientID))
                                 patientReports = L.decodeServerResponse(c.recvMsg(2048))
+                                # report = I.clinician_showPatientReports(patientReports)
+                                # I.showSelectedReport(report)
+                                
+                                
+                               
                                 if patientReports in (None,'huh'):
                                     I.clinician_errorWithPatients()
                                 else:
+                                    
                                     report = I.clinician_showPatientReports(patientReports)
                                 
-                                    I.showSelectedReport(report)
+                                    I.clinician_showSelectedReport(report)
                         case 2: 
 
                             c.sendMsg(L.clinician_requestPatientsList())
@@ -48,12 +53,13 @@ def runClient():
                                     I.clinician_errorWithPatients()
                                 else:
                                     report = I.clinician_showPatientReports(patientReports)
-                                    I.showSelectedReport(report)
+                                    reportID =  report[0]
+                                    I.clinician_showSelectedReport(report)
                                     comment = I.clinician_addComment()
-                                    c.sendMsg(L.clinician_addCommentToReport(report.id,comment))
+                                    c.sendMsg(L.clinician_addCommentToReport(reportID,comment))
                                     serverResponse=L.decodeServerResponse(c.recvMsg(2048))
                                     if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
-                                 #TODO RESTO DEL MENU CLINICIAN
+                                    else: I.success()
                 
             
             elif clientType == 'admin':
@@ -103,7 +109,7 @@ def runClient():
                             raise SystemExit
                         case _: I.wrongOption()
 
-        except Exception : pass
+        # except Exception : pass
 
 if __name__ == "__main__": 
     runClient()

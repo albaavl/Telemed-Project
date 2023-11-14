@@ -76,9 +76,8 @@ def clinician_mainMenu():
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1.Show patients.")
-    print("  2.Show reports.")
-    print("  3.Add comment to a report.")
-    print("  4.Log out.")
+    print("  2.Add comment to reports.")
+    print("  3.Log out.")
     return int(input("Please select one option: "))
 
 def clinician_showPatients(patients: list):
@@ -96,22 +95,29 @@ def clinician_showPatientReports(reports: list):
     for i in range(len(reports)):
         print(reports[i])
     opt=int(input("Please select one report: "))
-    return reports[opt]
+    return reports[opt-1]
 
 def clinician_showSelectedReport(report: list):
     '''Shows the data of the selected report in the terminal'''
-    #No tengo muy claro como esta estructurado el contenido del reporte, asi que lo dejo como lista por si acaso
+    # os.system('cls' if os.name=='nt' else 'clear')
     print("Report data:")
     print(report)
+    input("Press enter to go back into main menu...")
+    # for i, item in enumerate(report, start=1):
+    #     print(f"{i}. {item}")
 
 def clinician_errorWithPatients():
     print('Something went wrong while getting the information from the server. Please try again later.')
     input("Press enter to go back into main menu...")
 
-def clinitian_addComment():
+def clinician_addComment():
     '''Ask user via terminal for the comment, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
-    return input("Please introduce your comment below:\n")
+    comment = input("Please introduce your comment below:\n")
+    return comment
+
+def clinician_failedCommentCreation():
+    print('Something went wrong while sending data to the server. Please try again later.')
 
 #Admin only
 
