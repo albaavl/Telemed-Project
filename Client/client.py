@@ -75,7 +75,9 @@ def runClient():
                             psw = L.generatePswHash(psw)
                             c.sendMsg(L.admin_createUser(username,psw,usertype))
                             serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                            if serverResponse.__class__ == tuple: I.admin_failedUserCreation(serverResponse[0]) #TODO replace placeholder error
+                            if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0]) 
+                            else: print(serverResponse)
+                            input("Press entrer to continue...")
                         case 2: #Delete user
                             c.sendMsg(L.admin_showAllUsers())
                             serverResponse=L.decodeServerResponse(c.recvMsg(8192))
@@ -85,10 +87,11 @@ def runClient():
                                     usrID=I.admin_selectUser(serverResponse)
                                     c.sendMsg(L.admin_deleteUser(usrID))
                                     break
-                                if serverResponse.__class__ == tuple: I.admin_failedUserCreation() #TODO replace placeholder error
+                                if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
                                 serverResponse=L.decodeServerResponse(c.recvMsg(8192))
                                 print(serverResponse)
                                 input("Press enter to go back to menu...")
+                            elif serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
                             else:
                                 input("Something went wrong. Press intro to go back to main menu...")
                         case 3: #Log out
@@ -106,7 +109,7 @@ def runClient():
                             else:
                                 c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
                                 serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                            if serverResponse.__class__ == tuple: I.patient_errorWithParams(serverResponse[0]) #TODO replace placeholder error
+                            if serverResponse.__class__ == tuple: I.patient_errorWithParams(serverResponse[0]) 
                             else: I.success()
                         case 2:
                             c.logOut()

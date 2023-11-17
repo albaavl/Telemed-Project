@@ -1,4 +1,4 @@
-import os
+import os, math
 
 
 #Generic fn
@@ -158,10 +158,25 @@ def admin_addUser():
             print("Invalid user type, please use Admin/A, Clinician/C or Patient/P")
             input("Press intro to continue...")
 
-def admin_failedUserCreation(error):
+def printErrors(error):
     print(error)
-    input("shiet")
+    input("Press intro to continue...")
 
 def admin_selectUser(lst:list):
-    print(lst)
-    return input("Please introduce an user id to delete: ")
+
+    print("Users registered in the system.")
+    print("ID   Name        Role")
+    for p in lst:
+        for s in range(3):
+            print(p[s],end="")
+            if s==0:
+                i=math.floor(math.log10(p[s]))
+                if 4-i >= 0: 
+                    for j in range(4-i):print(" ", end="")
+            elif s==1:
+                if 12-p[s].__len__() >= 0:
+                    for j in range(12-p[s].__len__()):print(" ", end="")
+
+        print("")
+
+    return input("\nPlease introduce an user id to delete: ")

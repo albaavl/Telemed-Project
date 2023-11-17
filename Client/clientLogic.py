@@ -4,8 +4,6 @@ import time
 from bitalino import BITalino as bit
 
 
-
-
 def generatePswHash(password:str):
     hashgen = hashlib.sha512()
     hashgen.update(password.encode('utf8'))
