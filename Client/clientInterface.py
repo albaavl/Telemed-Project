@@ -1,4 +1,4 @@
-import os,math
+import os,math,re
 
 
 #Generic fn
@@ -83,13 +83,36 @@ def clinician_mainMenu():
     return int(input("Please select one option: "))
 
 def clinician_showPatients(patients: list):
-    '''Shows the list of patients in the terminal, returns the selected patient'''
-    os.system('cls' if os.name=='nt' else 'clear')
+    # '''Shows the list of patients in the terminal, returns the selected patient'''
+    # os.system('cls' if os.name=='nt' else 'clear')
+    # print("Available patients:")
+    # numeros = {}
+    # for i, patient in enumerate(patients):
+    #     numeros = {i+1:patient[0]}
+
+
+    # for i in range(len(patients)):
+        
+    #     print("Patient " + str(numeros[patients[i][0]]) + " - " + patients[i][1])
+    # opt=int(input("Please select one option: "))
+    # return numeros[opt]
     print("Available patients:")
-    for i in range(len(patients)):
-        print("Patient " + str(patients[i][0]) + " - " + patients[i][1])
-    opt=int(input("Please select one option: "))
-    return opt
+    aux = {}
+      
+    for i, patient in enumerate(patients):
+        aux[i+1] = patient[0]
+        print("Patient " + str(i+1) + " - " + patient[1])
+
+    while True:
+        try:
+            opt = int(input("Please select one option: "))
+            if 1 <= opt <= len(aux):
+                return aux[opt]
+            else:
+                print("Invalid option. Please enter a number within the valid range.")
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+
 
 def clinician_showPatientReports(reports: list):
     '''Shows the data of the patient in the terminal, returns the selected report'''
