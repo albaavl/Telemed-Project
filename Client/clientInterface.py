@@ -198,29 +198,27 @@ def admin_addUser():
             print("Invalid user type, please use Admin/A, Clinician/C or Patient/P")
             input("Press intro to continue...")
 
-def printErrors(error):
-    print(error)
-    input("Press intro to continue...")
 
 def admin_selectUser(lst:list):
 
-    print("Users registered in the system.")
-    print("ID   Name        Role")
+    os.system('cls' if os.name=='nt' else 'clear')
+    print("Users registered in the system.\n")
+    print("ID     Role          Name")
     for p in lst:
-        for s in range(3):
+        for s in (0,2,1):
             print(p[s],end="")
             if s==0:
                 i=math.floor(math.log10(p[s]))
-                if 4-i >= 0: 
-                    for j in range(4-i):print(" ", end="")
-            elif s==1:
-                if 12-p[s].__len__() >= 0:
-                    for j in range(12-p[s].__len__()):print(" ", end="")
+                if 7-i >= 0: 
+                    for j in range(6-i):print(" ", end="")
+            elif s==2:
+                if 14-p[s].__len__() >= 0:
+                    for j in range(14-p[s].__len__()):print(" ", end="")
 
         print("")
 
     while True:
-        usrin=input("Please select one user ID (Introduce any value to go back to main menu): ")
+        usrin=input("\nPlease select one user ID (Introduce any value to go back to main menu): ")
         try: 
             deleteID = int(usrin)
             for p in lst:
@@ -229,3 +227,8 @@ def admin_selectUser(lst:list):
         except ValueError: 
             print("That's not a number. Please introduce a valid option.")
             print("If you want to go back to the main menu, introduce a number that doesnt correspond to any userID.")
+
+            
+def printErrors(error):
+    print(error)
+    input("Press intro to continue...")
