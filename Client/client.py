@@ -23,19 +23,15 @@ def runClient():
                     match I.clinician_mainMenu():
                         case 1: #Show all patients and reports
                             c.sendMsg(L.clinician_requestPatientsList())
-                            patientList = L.decodeServerResponse(c.recvMsg(2048))
+                            patientList = L.decodeServerResponse(c.recvMsg(8192))
                             if patientList in (None,'huh'):
                                 I.clinician_errorWithPatients()
                             else:
                                 '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
                                 patientID = I.clinician_showPatients(patientList)
                                 c.sendMsg(L.clinician_requestPatientReports(patientID))
-                                patientReports = L.decodeServerResponse(c.recvMsg(2048))
-                                # report = I.clinician_showPatientReports(patientReports)
-                                # I.showSelectedReport(report)
-                                
-                                
-                                
+                                patientReports = L.decodeServerResponse(c.recvMsg(1048576))
+                            
                                 if patientReports in (None,'huh'):
                                     I.clinician_errorWithPatients()
                                 else:
@@ -46,25 +42,30 @@ def runClient():
                         case 2: 
 
                             c.sendMsg(L.clinician_requestPatientsList())
-                            patientList = L.decodeServerResponse(c.recvMsg(2048))
+                            patientList = L.decodeServerResponse(c.recvMsg(8192))
                             if patientList in (None,'huh'):
                                 I.clinician_errorWithPatients()
                             else:
                                 '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
                                 patientID = I.clinician_showPatients(patientList)
                                 c.sendMsg(L.clinician_requestPatientReports(patientID))
-                                patientReports = L.decodeServerResponse(c.recvMsg(2048))
+                                patientReports = L.decodeServerResponse(c.recvMsg(8192))
                                 if patientReports in (None,'huh'):
                                     I.clinician_errorWithPatients()
                                 else:
                                     report = I.clinician_showPatientReports(patientReports)
-                                    reportID =  report[0]
                                     I.clinician_showSelectedReport(report)
-                                    comment = I.clinician_addComment()
-                                    c.sendMsg(L.clinician_addCommentToReport(reportID,comment))
-                                    serverResponse=L.decodeServerResponse(c.recvMsg(2048))
-                                    if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
-                                    else: I.success()
+                                    if report:
+                                        reportID =  report[0]
+                                        comment = I.clinician_addComment(report[5])
+                                        c.sendMsg(L.clinician_addCommentToReport(reportID,comment))
+                                        serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                                        if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
+                                    
+                        case 3: 
+                            c.logOut()
+                            raise SystemExit
+
                     
             
             elif clientType == 'admin':
@@ -87,7 +88,6 @@ def runClient():
                                     break
                                 if serverResponse.__class__ == tuple: I.admin_failedUserCreation() #TODO replace placeholder error
                                 serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                                print(serverResponse)
                                 input("Press enter to go back to menu...")
                             else:
                                 input("Something went wrong. Press intro to go back to main menu...")
