@@ -37,9 +37,10 @@ def patient_askForBitalinoMAC():
     return input("Please introduce the MAC address of your bitalino device: ")
 
 
-def patient_wrongMAC():
+def patient_bitalinoError():
     os.system('cls' if os.name=='nt' else 'clear')
     print("The MAC address introduced was wrong or the device could not be found.")
+    input("Press enter to back to main menu...")
 
 
 def patient_mainMenu():
@@ -48,7 +49,11 @@ def patient_mainMenu():
     print("Available options:")
     print("  1.Place a new medical report.")
     print("  2.Log out.")
-    return int(input("Please select one option: "))
+    while True:
+        usrin=input("Please select one option: ")
+        try: return int(usrin)
+        except ValueError: 
+            print("That's not a number. Please introduce a valid option.")
 
 
 def patient_askForSymptoms():
@@ -62,8 +67,8 @@ def patient_askForParameters():
     while True:
         os.system('cls' if os.name=='nt' else 'clear')
         i=input("Would you like to record parameters with your bitalino device? (y/n)")
-        if i.capitalize() in ("YES","Y","SI","S"): return True
-        elif i.capitalize() in ("NO", "N"): return False
+        if i.capitalize() in ("Yes","Y","Si","S"): return True
+        elif i.capitalize() in ("No", "N"): return False
 
 
 def patient_errorWithParams(error):
@@ -182,14 +187,18 @@ def admin_mainMenu():
     print("  1.Create a new user.")
     print("  2.Delete selected user.")
     print("  3.Log out.")
-    return int(input("Please select one option: "))
+    while True:
+        usrin=input("Please select one option: ")
+        try: return int(usrin)
+        except ValueError: 
+            print("That's not a number. Please introduce a valid option.")
 
 def admin_addUser():
     os.system('cls' if os.name=='nt' else 'clear')
     print("--- Create new user ---")
     print("Leave name field empty to go back into main menu.")
     name=input("User name:")
-    if name == "\n": return None
+    if name == "": return (None,None,None)
     psw=input("User password:")
     while True:
         t=input("User type (Admin/Clinician/Patient): ")
@@ -222,4 +231,13 @@ def admin_selectUser(lst:list):
 
         print("")
 
-    return input("\nPlease introduce an user id to delete: ")
+    while True:
+        usrin=input("Please select one user ID (Introduce any value to go back to main menu): ")
+        try: 
+            deleteID = int(usrin)
+            for p in lst:
+                if deleteID == p[0]: return deleteID
+            return None
+        except ValueError: 
+            print("That's not a number. Please introduce a valid option.")
+            print("If you want to go back to the main menu, introduce a number that doesnt correspond to any userID.")

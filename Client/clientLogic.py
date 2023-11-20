@@ -2,7 +2,7 @@ import hashlib, json, pickle, os
 import time
 from json import JSONDecodeError
 
-# from bitalino import BITalino as bit
+from bitalino import BITalino as bit
 
 
 def generatePswHash(password:str):
@@ -16,7 +16,6 @@ def sendLoginCredentials(usr:str,psw:bytes):
 def decodeServerResponse(query:bytes):
     '''Return `content` AKA the response value, or  `None` if the response has invalid format'''
     try:
-        print("Received Data:", query)  # Add this line to print received data
         response=json.loads(query)
         if not response: return None
         if response['control'] == 'success': return response['content']
@@ -29,30 +28,33 @@ def decodeServerResponse(query:bytes):
 
 #Patient Only    
 
-# def patient_connectToBitalino(mac:str="20:16:07:18:17:85", running_time = 5) -> (list):
-#     acqChannels = [2]
-#     samplingRate = 1000
-#     nSamples = 10
-#     digitalOutput_on = [1, 1]
-#     digitalOutput_off = [0, 0]
-#     # Connect to BITalino
-#     device = bit(mac)
-#     device.start(samplingRate, acqChannels)
-#     start = time.time()
-#     end = time.time()
-#     data = ''
-#     device.trigger(digitalOutput_on)
-#     while (end - start) < running_time:
-#         # Read samples
-#         data += str(device.read(nSamples))
-#         end = time.time()
-#     # Turn BITalino led and buzzer off
-#     device.trigger(digitalOutput_off)
-#     # Stop acquisition
-#     device.stop()
-#     # Close connection
-#     device.close()
-#     return data
+def patient_connectToBitalino(mac:str="20:16:07:18:17:85", running_time = 5) -> (list):
+    try:
+        acqChannels = [2]
+        samplingRate = 1000
+        nSamples = 10
+        digitalOutput_on = [1, 1]
+        digitalOutput_off = [0, 0]
+        # Connect to BITalino
+        device = bit(mac)
+        device.start(samplingRate, acqChannels)
+        start = time.time()
+        end = time.time()
+        data = ''
+        device.trigger(digitalOutput_on)
+        while (end - start) < running_time:
+            # Read samples
+            data += str(device.read(nSamples))
+            end = time.time()
+        # Turn BITalino led and buzzer off
+        device.trigger(digitalOutput_off)
+        # Stop acquisition
+        device.stop()
+        # Close connection
+        device.close()
+        return data
+    except Exception:
+        return None
 
 
 def patient_sendParams(patientInput:str, clientId:int, params:list=None):
@@ -81,5 +83,5 @@ def admin_createUser(name:str, psw:bytes, userType:str):
 def admin_showAllUsers():
     return json.dumps({'control':'show_users'}).encode('utf8')
 
-def admin_deleteUser(userID:int=999):
+def admin_deleteUser(userID:int):
     return json.dumps({'control':'delete_user','content':userID}).encode('utf8')

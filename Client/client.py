@@ -72,13 +72,16 @@ def runClient():
                 while True:
                     match I.admin_mainMenu():
                         case 1: #Create user
-                            username, psw, usertype = I.admin_addUser()
-                            psw = L.generatePswHash(psw)
-                            c.sendMsg(L.admin_createUser(username,psw,usertype))
-                            serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                            if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0]) 
-                            else: print(serverResponse)
-                            input("Press entrer to continue...")
+                            while True:
+                                username, psw, usertype = I.admin_addUser()
+                                if username==None: break
+                                psw = L.generatePswHash(psw)
+                                c.sendMsg(L.admin_createUser(username,psw,usertype))
+                                serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                                if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0]) 
+                                else: print(serverResponse)
+                                input("Press entrer to continue...")
+                                break
                         case 2: #Delete user
                             c.sendMsg(L.admin_showAllUsers())
                             serverResponse=L.decodeServerResponse(c.recvMsg(8192))
@@ -86,11 +89,13 @@ def runClient():
 
                                 while True:
                                     usrID=I.admin_selectUser(serverResponse)
+                                    if(usrID==None): break
                                     c.sendMsg(L.admin_deleteUser(usrID))
+                                    serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                                    if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
+                                    else: print(serverResponse)
+                                    input("Press enter to go back to menu...")
                                     break
-                                if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
-                                serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                                input("Press enter to go back to menu...")
                             elif serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
                             else:
                                 input("Something went wrong. Press intro to go back to main menu...")
@@ -102,15 +107,20 @@ def runClient():
                 while True:
                     match I.patient_mainMenu():
                         case 1:
-                            symptoms=I.patient_askForSymptoms()
-                            if I.patient_askForParameters():
-                                params=L.patient_connectToBitalino()
-                                c.sendMsg(L.patient_sendParams(symptoms, clientId, params))
-                            else:
-                                c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
-                                serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                            if serverResponse.__class__ == tuple: I.patient_errorWithParams(serverResponse[0]) 
-                            else: I.success()
+                            while True:
+                                symptoms=I.patient_askForSymptoms()
+                                if I.patient_askForParameters():
+                                    params=L.patient_connectToBitalino()
+                                    if params==None:
+                                        I.patient_bitalinoError()
+                                        break
+                                    c.sendMsg(L.patient_sendParams(symptoms, clientId, params))
+                                else:
+                                    c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
+                                    serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                                if serverResponse.__class__ == tuple: I.patient_errorWithParams(serverResponse[0]) 
+                                else: I.success()
+                                break
                         case 2:
                             c.logOut()
                             raise SystemExit
