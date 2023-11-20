@@ -87,6 +87,8 @@ class Manager:
 
     def add_comments(self, reportId, comments):
         try:
+            print(reportId)
+            print(comments)
             self.cursor.execute("UPDATE reports SET HpComments = ? WHERE id = ?", (comments, reportId))
             return True
         except Exception as e:

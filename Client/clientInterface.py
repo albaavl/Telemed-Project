@@ -99,81 +99,72 @@ def clinician_mainMenu():
 def clinician_showPatients(patients: list):
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available patients:")
-    index = {}
-      
-    for i, patient in enumerate(patients):
-        index[i+1] = patient[0]
-        print("Patient " + str(i+1) + " - " + patient[1])
 
+    for patient in patients:
+        print("PatientID: " + str(patient[0]) + " - Name: " + patient[1])
+
+def clinician_selectOption(pat_or_rep: list):
+    options = []
+    for pr in pat_or_rep:
+        options.append(pr[0])
     while True:
         try:
             opt = int(input("Please select one option: "))
-            if 1 <= opt <= len(index):
-                return index[opt]
+            if opt in options:
+                return opt
             else:
-                print("Invalid option. Please enter a number within the valid range.")
+                print("Invalid option. Please enter a valid ID.")
         except ValueError:
             print("Invalid input. Please enter a valid integer.")
 
 
-def clinician_showPatientReports(reports: list):
-    '''Shows the data of the patient in the terminal, returns the selected report'''
+def clinician_showReports(reports: list):
+    '''Shows the reports of the patient in the terminal'''
     os.system('cls' if os.name=='nt' else 'clear')
     if not reports:
         print("No reports available.")
-        return reports
     else:
         print("Available reports:")
-        for i in range(len(reports)):
-            print("Report " + str(i+1) + " - " + reports[i][2])
-        while True:
-            try:
-                opt = int(input("Please select one report (enter the corresponding number): "))
-                if 1 <= opt <= len(reports):
-                    break
-                else:
-                    print("Invalid selection. Please enter a valid number.")
-            except ValueError:
-                print("Invalid input. Please enter a number.") 
+        for report in reports:
+            print("ReportID " + str(report[0]) + " - " + report[2])
 
-    return reports[opt - 1]
    
 
-def clinician_showSelectedReport(report: list):
-    print()
+def clinician_showSelectedReport(reports: list, report_ID):
     '''Shows the data of the selected report in the terminal'''
-    os.system('cls' if os.name=='nt' else 'clear')
+    os.system('cls' if os.name =='nt' else 'clear')
+    for report in reports:
+        if report[0] == report_ID:
+            break
     if not report:
-        print("No reports yet.")
+        print("No report.")
         return input("Press enter to continue...")
     else:
-        for i in range(len(report)):
-            if not report[i]:
-                report[i] = "No data available."
+        print("Report data:")
+        print("Report ID: " + str(report[0]))
+        print("Date: " + str(report[2]))
+        print("Symptoms: " + report[3])
+        if report[4]!= None:
+            print("Bitalino signal: " + report[4])
+        else:
+            print("No Bitalino signal recorded")
+        print("Comments: " + report[5])
 
-        print("Report data:\n")
-        print("Date:\n" + str(report[2]) +"\n")
-        print("Symptoms:\n" + report[3] +"\n")
-        print("Bitalino signal:\n" + report[4] +"\n")
-        print("Comments:\n" + report[5] +"\n")
-    return input("Press enter to continue...")
- 
-
-def clinician_errorWithPatients():
-    print('Something went wrong while getting the information from the server. Please try again later.')
-    input("Press enter to go back into main menu...")
-
-def clinician_addComment(previous_comment: str):
+def clinician_addComment():
     '''Ask user via terminal for the comment, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
     comment = input("Please introduce your comment below:\n")
-    pattern = "No data available."
-    new_comment = re.sub(pattern, '', previous_comment)
-    complete_comment = new_comment + "\n" + comment
-    return complete_comment
+    return comment
+
+def clinician_errorRetrievingInfoFromServer():
+    print('Something went wrong while getting the information from the server. Please try again later.')
+    input("Press enter to go back into main menu...")
 
 def clinician_failedCommentCreation():
     print('Something went wrong while sending data to the server. Please try again later.')
+    input("Press enter to go back into main menu...")
+
+
 
 #Admin only
 

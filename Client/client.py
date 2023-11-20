@@ -21,46 +21,37 @@ def runClient():
         elif clientType == 'clinician':
             while True:
                 match I.clinician_mainMenu():
-                    case 1: #Show all patients and reports
+                    case 1: #Show all patients
                         c.sendMsg(L.clinician_requestPatientsList())
                         patientList = L.decodeServerResponse(c.recvMsg(8192))
                         if patientList in (None,'huh'):
-                            I.clinician_errorWithPatients()
+                            I.clinician_errorRetrievingInfoFromServer()
                         else:
-                            '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
-                            patientID = I.clinician_showPatients(patientList)
-                            c.sendMsg(L.clinician_requestPatientReports(patientID))
-                            patientReports = L.decodeServerResponse(c.recvMsg(1048576))
-                        
-                            if patientReports in (None,'huh'):
-                                I.clinician_errorWithPatients()
-                            else:
-                                
-                                report = I.clinician_showPatientReports(patientReports)
-                            
-                                I.clinician_showSelectedReport(report)
-                    case 2: 
+                            I.clinician_showPatients(patientList)
 
+                    case 2:
                         c.sendMsg(L.clinician_requestPatientsList())
                         patientList = L.decodeServerResponse(c.recvMsg(8192))
-                        if patientList in (None,'huh'):
-                            I.clinician_errorWithPatients()
+                        if patientList in (None, 'huh'):
+                            I.clinician_errorRetrievingInfoFromServer()
                         else:
-                            '''Sends the position of the desired patient within the server's list of patients, and receives the patient's data'''
-                            patientID = I.clinician_showPatients(patientList)
+                            I.clinician_showPatients(patientList)
+                            patientID = I.clinician_selectOption(patientList)
                             c.sendMsg(L.clinician_requestPatientReports(patientID))
                             patientReports = L.decodeServerResponse(c.recvMsg(8192))
                             if patientReports in (None,'huh'):
-                                I.clinician_errorWithPatients()
+                                I.clinician_errorRetrievingInfoFromServer()
                             else:
-                                report = I.clinician_showPatientReports(patientReports)
-                                I.clinician_showSelectedReport(report)
-                                if report:
-                                    reportID =  report[0]
-                                    comment = I.clinician_addComment(report[5])
-                                    c.sendMsg(L.clinician_addCommentToReport(reportID,comment))
-                                    serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                                    if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
+                                I.clinician_showReports(patientReports)
+                                reportID = I.clinician_selectOption(patientReports)
+                                I.clinician_showSelectedReport(patientReports, reportID)
+                                comment = I.clinician_addComment()
+                                c.sendMsg(L.clinician_addCommentToReport(reportID, comment))
+                                serverResponse = L.decodeServerResponse(c.recvMsg(8192))
+                                if serverResponse.__class__ == tuple:
+                                    I.printErrors(serverResponse[0])
+                                else:
+                                    print(serverResponse)
                                 
                     case 3: 
                         c.logOut()
