@@ -77,37 +77,34 @@ def clinician_mainMenu():
     '''Generates the main menu for the health expert, returns the option chosen by the user: 1-Show patients; 2-Show reports; 3-Add comment; 4-Logout'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
-    print("  1.Show patients.")
-    print("  2.Add comment to reports.")
-    print("  3.Log out.")
-    return int(input("Please select one option: "))
+    print("  1. Show patients.")
+    print("  2. Add comment to reports.")
+    print("  3. Log out.")
+
+    while True:
+        try:
+            option = int(input("Please select one option: "))
+            if option in [1, 2, 3]:
+                return option
+            else:
+                print("Invalid option. Please enter a number within the valid range.")
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
 
 def clinician_showPatients(patients: list):
-    # '''Shows the list of patients in the terminal, returns the selected patient'''
-    # os.system('cls' if os.name=='nt' else 'clear')
-    # print("Available patients:")
-    # numeros = {}
-    # for i, patient in enumerate(patients):
-    #     numeros = {i+1:patient[0]}
-
-
-    # for i in range(len(patients)):
-        
-    #     print("Patient " + str(numeros[patients[i][0]]) + " - " + patients[i][1])
-    # opt=int(input("Please select one option: "))
-    # return numeros[opt]
+    os.system('cls' if os.name=='nt' else 'clear')
     print("Available patients:")
-    aux = {}
+    index = {}
       
     for i, patient in enumerate(patients):
-        aux[i+1] = patient[0]
+        index[i+1] = patient[0]
         print("Patient " + str(i+1) + " - " + patient[1])
 
     while True:
         try:
             opt = int(input("Please select one option: "))
-            if 1 <= opt <= len(aux):
-                return aux[opt]
+            if 1 <= opt <= len(index):
+                return index[opt]
             else:
                 print("Invalid option. Please enter a number within the valid range.")
         except ValueError:
@@ -142,7 +139,7 @@ def clinician_showSelectedReport(report: list):
     '''Shows the data of the selected report in the terminal'''
     os.system('cls' if os.name=='nt' else 'clear')
     if not report:
-        print("No report available.")
+        print("No reports yet.")
         return input("Press enter to continue...")
     else:
         for i in range(len(report)):
@@ -152,7 +149,7 @@ def clinician_showSelectedReport(report: list):
         print("Report data:\n")
         print("Date:\n" + str(report[2]) +"\n")
         print("Symptoms:\n" + report[3] +"\n")
-        print("Bitalino signal\n:" + report[4] +"\n")
+        print("Bitalino signal:\n" + report[4] +"\n")
         print("Comments:\n" + report[5] +"\n")
     return input("Press enter to continue...")
  
