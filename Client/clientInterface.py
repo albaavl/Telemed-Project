@@ -230,5 +230,7 @@ def admin_selectUser(lst:list):
 
             
 def printErrors(error):
-    print(error)
-    input("Press intro to continue...")
+    try:
+        print(error[0])
+    except:
+        print(error)
