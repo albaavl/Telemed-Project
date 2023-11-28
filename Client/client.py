@@ -29,6 +29,8 @@ def runClient():
                         else:
                             I.clinician_showPatients(patientList)
 
+                        input("Press to go back to menu...")
+
                     case 2:
                         c.sendMsg(L.clinician_requestPatientsList())
                         patientList = L.decodeServerResponse(c.recvMsg(8192))
@@ -52,6 +54,8 @@ def runClient():
                                     I.printErrors(serverResponse[0])
                                 else:
                                     print(serverResponse)
+
+                                input("Press to go back to menu...")
                                 
                     case 3: 
                         c.logOut()
@@ -71,7 +75,7 @@ def runClient():
                             serverResponse=L.decodeServerResponse(c.recvMsg(8192))
                             if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0]) 
                             else: print(serverResponse)
-                            input("Press entrer to continue...")
+                            input("Press enter to go back to menu...")
                             break
                     case 2: #Delete user
                         c.sendMsg(L.admin_showAllUsers())
