@@ -83,7 +83,7 @@ def runClient():
                         if serverResponse.__class__ == list:
 
                             while True:
-                                usrID=I.admin_selectUser(serverResponse)
+                                usrID=I.admin_selectUserForDeletion(serverResponse)
                                 if(usrID==None): break
                                 c.sendMsg(L.admin_deleteUser(usrID))
                                 serverResponse=L.decodeServerResponse(c.recvMsg(8192))
@@ -94,7 +94,14 @@ def runClient():
                         elif serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
                         else:
                             input("Something went wrong. Press intro to go back to main menu...")
-                    case 3: #Log out
+                    case 3: #Shutdown server
+                        c.sendMsg(L.admin_shutdown())
+                        serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                        if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
+                        else: print(serverResponse)
+                        #TODO check server response and either print response and shut down or go back to main menu
+                        input("Press enter to continue...")
+                    case 4: #Log out
                         c.logOut()
                         raise SystemExit
                     case _: I.wrongOption()

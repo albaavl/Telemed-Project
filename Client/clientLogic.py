@@ -1,20 +1,24 @@
-import hashlib, json, pickle, os
+import hashlib, json, pickle
 import time
 from json import JSONDecodeError
 
 from bitalino import BITalino as bit
 
 
-def generatePswHash(password:str):
+def generatePswHash(password:str) -> bytes:
+    '''For a given password `string`, its encrypted and returned as `bytes`'''
     hashgen = hashlib.sha512()
     hashgen.update(password.encode('utf8'))
     return hashgen.digest()
 
-def sendLoginCredentials(usr:str,psw:bytes):
+def sendLoginCredentials(usr:str,psw:bytes) -> bytes:
+    '''Requires username `string` and password `bytes`, returns log in
+        query in bytes'''
     return pickle.dumps({'control':'login','content':[usr,psw]}) 
 
-def decodeServerResponse(query:bytes):
-    '''Return `content` AKA the response value, or  `None` if the response has invalid format'''
+def decodeServerResponse(query:bytes) -> bytes:
+    '''Return `content` AKA the response value, or  `None` if the response has invalid format.\n
+        If the response was an error type, the error msg will be returned inside a `tuple`.'''
     try:
         response=json.loads(query)
         if not response: return None
@@ -76,12 +80,20 @@ def clinician_addCommentToReport(reportID:int, comments:str):
 
 #Admin only
 
-def admin_createUser(name:str, psw:bytes, userType:str):
+def admin_createUser(name:str, psw:bytes, userType:str) -> bytes:
+    '''Generate query to create a new User: \n >`name` must be provided as an `string`.
+        \n >`password` must be bytes, preferrably encrypted (Bytes will be sent as provided). \nReturns the query in `bytes`.'''
     userData=(name,psw,userType)    
     return pickle.dumps({'control':'add_user','content':userData})
 
-def admin_showAllUsers():
+def admin_showAllUsers() -> bytes:
+    '''Generates query to get all users from database. No input required. Returns the query in `bytes`.'''
     return json.dumps({'control':'show_users'}).encode('utf8')
 
-def admin_deleteUser(userID:int):
+def admin_deleteUser(userID:int) -> bytes:
+    '''Generates user deletion query, requires the userID of the target user.Returns the query in `bytes`.'''
     return json.dumps({'control':'delete_user','content':userID}).encode('utf8')
+
+def admin_shutdown() -> bytes:
+    '''Generate shutdown query, returns `Bytes`. No input required'''
+    return json.dumps({'control':'shut_down','content':"Shut down, now. (つ｡◕‿‿◕｡)つ Plz"}).encode('utf8')

@@ -4,7 +4,7 @@ import os,math,re
 #Generic fn
 
 def logIn():
-    '''Ask user username and password via terminal, returns (User, Password)'''
+    '''Ask user username and password via terminal, returns: User, Password'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("-- Welcome to our client App --")
     username = input("Please introduce your username: ")
@@ -43,7 +43,7 @@ def patient_bitalinoError():
     input("Press enter to back to main menu...")
 
 
-def patient_mainMenu():
+def patient_mainMenu()->int:
     '''Generates the main menu for the user, returns the option chosen by the user: 1-New medical report; 2-Logout'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
@@ -56,14 +56,14 @@ def patient_mainMenu():
             print("That's not a number. Please introduce a valid option.")
 
 
-def patient_askForSymptoms():
+def patient_askForSymptoms()->str:
     '''Ask user via terminal for the symptoms, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
     return input("Please introduce your symptoms below:\n")
 
 
-def patient_askForParameters():
-    '''Ask user via terminal whether they want to record parameters or not, returns True/False'''
+def patient_askForParameters()->bool:
+    '''Ask user via terminal whether they want to record parameters or not, returns `True`/`False`.'''
     while True:
         os.system('cls' if os.name=='nt' else 'clear')
         i=input("Would you like to record parameters with your bitalino device? (y/n)")
@@ -168,13 +168,14 @@ def clinician_failedCommentCreation():
 
 #Admin only
 
-def admin_mainMenu():
+def admin_mainMenu()->int:
     '''Generates the main menu for the user, returns the option chosen by the user: 1-Add user; 2-Delete user; 3-Logout'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1.Create a new user.")
     print("  2.Delete selected user.")
-    print("  3.Log out.")
+    print("  3.Shut down server.")
+    print("  4.Log out.")
     while True:
         usrin=input("Please select one option: ")
         try: return int(usrin)
@@ -182,6 +183,9 @@ def admin_mainMenu():
             print("That's not a number. Please introduce a valid option.")
 
 def admin_addUser():
+    '''Prompts user for data necesary to create a new user into the system.\n
+        Returns the user data required to create a new user, or None if user
+        wants to go back without creating a new user.'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("--- Create new user ---")
     print("Leave name field empty to go back into main menu.")
@@ -199,19 +203,22 @@ def admin_addUser():
             input("Press intro to continue...")
 
 
-def admin_selectUser(lst:list):
-
+def admin_selectUserForDeletion(lst:list)->(int,None):
+    '''Provided an user list, will print display all of the users, and ask the user for
+        an user ID (user to be deleted), if the userID provided is within the range of
+        user ids of the list, it will be returned (`int`). Otherwise return `None`.'''
     os.system('cls' if os.name=='nt' else 'clear')
-    print("Users registered in the system.\n")
+    print("--- Users registered in the system ---\n")
     print("ID     Role          Name")
     for p in lst:
         for s in (0,2,1):
-            print(p[s],end="")
             if s==0:
+                print(p[s],end="")
                 i=math.floor(math.log10(p[s]))
                 if 7-i >= 0: 
                     for j in range(6-i):print(" ", end="")
             elif s==2:
+                print(p[s].capitalize(),end="")
                 if 14-p[s].__len__() >= 0:
                     for j in range(14-p[s].__len__()):print(" ", end="")
 
