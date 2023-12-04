@@ -15,7 +15,13 @@ class ClientConnection:
 
     def recvMsg(self,buffSize:int):
         '''Returns bytes received from server'''
-        return self.socket.recv(buffSize)
+
+        fBytes=b''
+        while True:
+            rBytes=self.socket.recv(buffSize)
+            fBytes+=rBytes
+            if(len(rBytes)<buffSize): return fBytes
+        
 
     def logOut(self):
         '''Close socket connection.'''
