@@ -51,7 +51,6 @@ class myServer:
 
     def read_message(self, csocket):
         '''This function is used to receive messages from the sockets of the clients'''
-        message ='a'
         final_message = b''
         message = csocket.recv(8096)
         if not message:
@@ -60,6 +59,7 @@ class myServer:
         elif len(message)<8096:
             final_message += message
         else:
+            final_message += message
             while message:
                 message = csocket.recv(8096)
                 final_message += message
