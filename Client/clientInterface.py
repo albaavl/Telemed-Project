@@ -1,10 +1,13 @@
 import os,math,re
 
 
+#   Module with all functions that provide output values to user
+#   or take inputs from user via console.
+
 #Generic fn
 
 def logIn():
-    '''Ask user username and password via terminal, returns (User, Password)'''
+    '''Ask user username and password via terminal, returns: User, Password'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("-- Welcome to our client App --")
     username = input("Please introduce your username: ")
@@ -37,33 +40,38 @@ def patient_askForBitalinoMAC():
     return input("Please introduce the MAC address of your bitalino device: ")
 
 
-def patient_wrongMAC():
+def patient_bitalinoError():
     os.system('cls' if os.name=='nt' else 'clear')
     print("The MAC address introduced was wrong or the device could not be found.")
+    input("Press enter to back to main menu...")
 
 
-def patient_mainMenu():
+def patient_mainMenu()->int:
     '''Generates the main menu for the user, returns the option chosen by the user: 1-New medical report; 2-Logout'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1.Place a new medical report.")
     print("  2.Log out.")
-    return int(input("Please select one option: "))
+    while True:
+        usrin=input("Please select one option: ")
+        try: return int(usrin)
+        except ValueError: 
+            print("That's not a number. Please introduce a valid option.")
 
 
-def patient_askForSymptoms():
+def patient_askForSymptoms()->str:
     '''Ask user via terminal for the symptoms, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
     return input("Please introduce your symptoms below:\n")
 
 
-def patient_askForParameters():
-    '''Ask user via terminal whether they want to record parameters or not, returns True/False'''
+def patient_askForParameters()->bool:
+    '''Ask user via terminal whether they want to record parameters or not, returns `True`/`False`.'''
     while True:
         os.system('cls' if os.name=='nt' else 'clear')
         i=input("Would you like to record parameters with your bitalino device? (y/n)")
-        if i.capitalize() in ("YES","Y","SI","S"): return True
-        elif i.capitalize() in ("NO", "N"): return False
+        if i.capitalize() in ("Yes","Y","Si","S"): return True
+        elif i.capitalize() in ("No", "N"): return False
 
 
 def patient_errorWithParams(error):
@@ -94,99 +102,98 @@ def clinician_mainMenu():
 def clinician_showPatients(patients: list):
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available patients:")
-    index = {}
-      
-    for i, patient in enumerate(patients):
-        index[i+1] = patient[0]
-        print("Patient " + str(i+1) + " - " + patient[1])
 
+    for patient in patients:
+        print("PatientID: " + str(patient[0]) + " - Name: " + patient[1])
+
+def clinician_selectOption(pat_or_rep: list):
+    options = []
+    for pr in pat_or_rep:
+        options.append(pr[0])
     while True:
         try:
             opt = int(input("Please select one option: "))
-            if 1 <= opt <= len(index):
-                return index[opt]
+            if opt in options:
+                return opt
             else:
-                print("Invalid option. Please enter a number within the valid range.")
+                print("Invalid option. Please enter a valid ID.")
         except ValueError:
             print("Invalid input. Please enter a valid integer.")
 
 
-def clinician_showPatientReports(reports: list):
-    '''Shows the data of the patient in the terminal, returns the selected report'''
+def clinician_showReports(reports: list):
+    '''Shows the reports of the patient in the terminal'''
     os.system('cls' if os.name=='nt' else 'clear')
     if not reports:
         print("No reports available.")
-        return reports
     else:
         print("Available reports:")
-        for i in range(len(reports)):
-            print("Report " + str(i+1) + " - " + reports[i][2])
-        while True:
-            try:
-                opt = int(input("Please select one report (enter the corresponding number): "))
-                if 1 <= opt <= len(reports):
-                    break
-                else:
-                    print("Invalid selection. Please enter a valid number.")
-            except ValueError:
-                print("Invalid input. Please enter a number.") 
+        for report in reports:
+            print("ReportID " + str(report[0]) + " - " + report[2])
 
-    return reports[opt - 1]
    
 
-def clinician_showSelectedReport(report: list):
-    print()
+def clinician_showSelectedReport(reports: list, report_ID):
     '''Shows the data of the selected report in the terminal'''
-    os.system('cls' if os.name=='nt' else 'clear')
+    os.system('cls' if os.name =='nt' else 'clear')
+    for report in reports:
+        if report[0] == report_ID:
+            break
     if not report:
-        print("No reports yet.")
+        print("No report.")
         return input("Press enter to continue...")
     else:
-        for i in range(len(report)):
-            if not report[i]:
-                report[i] = "No data available."
+        print("Report data:")
+        print("Report ID: " + str(report[0]))
+        print("Date: " + str(report[2]))
+        print("Symptoms: " + report[3])
+        if report[4]!= None:
+            print("Bitalino signal: " + report[4])
+        else:
+            print("No Bitalino signal recorded")
+        print("Comments: " + report[5])
 
-        print("Report data:\n")
-        print("Date:\n" + str(report[2]) +"\n")
-        print("Symptoms:\n" + report[3] +"\n")
-        print("Bitalino signal:\n" + report[4] +"\n")
-        print("Comments:\n" + report[5] +"\n")
-    return input("Press enter to continue...")
- 
-
-def clinician_errorWithPatients():
-    print('Something went wrong while getting the information from the server. Please try again later.')
-    input("Press enter to go back into main menu...")
-
-def clinician_addComment(previous_comment: str):
+def clinician_addComment():
     '''Ask user via terminal for the comment, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
     comment = input("Please introduce your comment below:\n")
-    pattern = "No data available."
-    new_comment = re.sub(pattern, '', previous_comment)
-    complete_comment = new_comment + "\n" + comment
-    return complete_comment
+    return comment
+
+def clinician_errorRetrievingInfoFromServer():
+    print('Something went wrong while getting the information from the server. Please try again later.')
+    input("Press enter to go back into main menu...")
 
 def clinician_failedCommentCreation():
     print('Something went wrong while sending data to the server. Please try again later.')
+    input("Press enter to go back into main menu...")
+
+
 
 #Admin only
 
-def admin_mainMenu():
+def admin_mainMenu()->int:
     '''Generates the main menu for the user, returns the option chosen by the user: 1-Add user; 2-Delete user; 3-Logout'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1.Create a new user.")
     print("  2.Delete selected user.")
-    print("  3.Log out.")
-    return int(input("Please select one option: "))
+    print("  3.Shut down server.")
+    print("  4.Log out.")
+    while True:
+        usrin=input("Please select one option: ")
+        try: return int(usrin)
+        except ValueError: 
+            print("That's not a number. Please introduce a valid option.")
 
 def admin_addUser():
+    '''Prompts user for data necesary to create a new user into the system.\n
+        Returns the user data required to create a new user, or None if user
+        wants to go back without creating a new user.'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("--- Create new user ---")
     print("Leave name field empty to go back into main menu.")
     name=input("User name:")
-    if name == "\n": return None
+    if name == "": return (None,None,None)
     psw=input("User password:")
     while True:
         t=input("User type (Admin/Clinician/Patient): ")
@@ -198,25 +205,42 @@ def admin_addUser():
             print("Invalid user type, please use Admin/A, Clinician/C or Patient/P")
             input("Press intro to continue...")
 
-def printErrors(error):
-    print(error)
-    input("Press intro to continue...")
 
-def admin_selectUser(lst:list):
-
-    print("Users registered in the system.")
-    print("ID   Name        Role")
+def admin_selectUserForDeletion(lst:list)->(int,None):
+    '''Provided an user list, will print display all of the users, and ask the user for
+        an user ID (user to be deleted), if the userID provided is within the range of
+        user ids of the list, it will be returned (`int`). Otherwise return `None`.'''
+    os.system('cls' if os.name=='nt' else 'clear')
+    print("--- Users registered in the system ---\n")
+    print("ID     Role          Name")
     for p in lst:
-        for s in range(3):
-            print(p[s],end="")
+        for s in (0,2,1):
             if s==0:
+                print(p[s],end="")
                 i=math.floor(math.log10(p[s]))
-                if 4-i >= 0: 
-                    for j in range(4-i):print(" ", end="")
-            elif s==1:
-                if 12-p[s].__len__() >= 0:
-                    for j in range(12-p[s].__len__()):print(" ", end="")
+                if 7-i >= 0: 
+                    for j in range(6-i):print(" ", end="")
+            elif s==2:
+                print(p[s].capitalize(),end="")
+                if 14-p[s].__len__() >= 0:
+                    for j in range(14-p[s].__len__()):print(" ", end="")
 
         print("")
 
-    return input("\nPlease introduce an user id to delete: ")
+    while True:
+        usrin=input("\nPlease select one user ID (Introduce any value to go back to main menu): ")
+        try: 
+            deleteID = int(usrin)
+            for p in lst:
+                if deleteID == p[0]: return deleteID
+            return None
+        except ValueError: 
+            print("That's not a number. Please introduce a valid option.")
+            print("If you want to go back to the main menu, introduce a number that doesnt correspond to any userID.")
+
+            
+def printErrors(error):
+    try:
+        print(error[0])
+    except:
+        print(error)
