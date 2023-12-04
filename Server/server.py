@@ -9,6 +9,7 @@ class myServer:
 
 
     def startServer(self):
+        '''This function is used to turn on the server'''
         socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
         self.sockets.append(socketServer)
         self.sockets[0].setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -17,47 +18,59 @@ class myServer:
         
         print('Server up!')
 
+    def closeServer(self):
+        '''This function is used to turn off the server'''
+        print('Server out!')
+        self.sockets[0].close()
+        raise SystemExit
+
     def listen(self):
+        '''This function is used to permanently listen from the main socket of the server to be able to accept new clients as well as receiving new messages from each of the sockets of the clients'''
         while True:
             r_socket, _, _ = select.select(self.sockets[:], [], [])
             for clientSocket in r_socket:
                 if clientSocket == self.sockets[0]:
+                    #this means that it is a new client as it is using the main socket of the server
                     self.accept_client()
                 else:
                     self.read_message(clientSocket)
 
     def accept_client(self):
+        '''This function is used to accept a new client, create a new socket to communicate with it and add it to the list of opened sockets'''
         s_client, direction_client = self.sockets[0].accept()
         self.sockets.append(s_client)
         print("Connection opened")
         print(direction_client)
 
     def read_message(self, csocket):
+        '''This function is used to receive messages from the sockets of the clients'''
         message = csocket.recv(8096)
         if not message:
             self.disconnectClient(csocket)
         else:
             try: dic_message = json.loads(message)
             except UnicodeDecodeError: dic_message = pickle.loads(message)
+            #this is done because the password as bytes cannot be read using a json so we employ the pickle class
             print(dic_message)
             if not dic_message:
                 print('Disconnected')
                 self.disconnectingClient(csocket)
             else:
                 print('Message received')
-                self.decode_message(dic_message,csocket)
+                self.decode_message(dic_message, csocket)
 
     def decode_message(self,dic_message,csocket):
-        possible_controls = ['new_report','show_patients','show_reports', 'show_users','add_comments','add_user','delete_user','login']
+        '''This function is used to decode the instructions recieved from the clients and generate and send the appropiate response'''
+        possible_controls = ['new_report','show_patients','show_reports', 'show_users','add_comments','add_user','delete_user','login', 'shut_down']
         try:
             if dic_message['control'] not in possible_controls:
                 csocket.send(json.dumps({'control': 'error', 'content':'Error: format not understood'}).encode('utf8'))
             elif dic_message['control'] == 'new_report':
-                #receives a list 1st element = symptoms and 2nd = bitalino
+                #receives a list [patient_id, fatigue, dizziness, sweating, symptoms, parambitalino]
                 content = dic_message['content']
-                if len(content) < 3: #in case there is no bitalino reading in the report
+                if len(content) < 6: #in case there is no bitalino reading in the report
                     content.append(None)
-                self.dbManager.new_report(content[0],content[1], content[2], date.today())
+                self.dbManager.new_report(content[0],content[1], content[2], content[3], content[4], content[5], date.today())
                 print('adding new report')
                 csocket.send(json.dumps({'control': 'success', 'content': 'Success: report added to database'}).encode('utf8'))
             elif dic_message['control'] == 'show_patients':
@@ -96,19 +109,27 @@ class myServer:
                 (userType,userId) = self.dbManager.checkUser(username, password)
                 print('logging in new client')
                 csocket.send(json.dumps({'control': 'success', 'content': (userType,userId)}).encode('utf8'))
+            elif dic_message['control'] == 'shut_down':
+                if len(self.sockets) == 2:
+                    csocket.send(json.dumps({'control': 'success',
+                                             'content': 'There are no other clients connected, shutting down the server, this action cannot be undone'}).encode('utf8'))
+                    server.closeServer()
+                else:
+                    csocket.send(json.dumps({'control': 'error', 'content': 'There are clients currently connected to the server, try again later'}).encode('utf8'))
+
         except Exception as e:
             print(e)
             csocket.send(json.dumps({'control': 'error', 'content': e.args}).encode('utf8'))
 
     def disconnectClient(self, csocket):
-       csocket.close()
-       self.sockets.remove(csocket)
-       print('Client out!')
+        '''This function is used to disconnect a client'''
+        csocket.close()
+        self.sockets.remove(csocket)
+        print('Client out!')
 
 if __name__ == "__main__":
     server = myServer()
     server.startServer()
     while True:
-        try:
-            server.listen()
-        except: pass
+        server.listen()
+

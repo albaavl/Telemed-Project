@@ -97,9 +97,12 @@ def runClient():
                     case 3: #Shutdown server
                         c.sendMsg(L.admin_shutdown())
                         serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                        if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0])
-                        else: print(serverResponse)
-                        #TODO check server response and either print response and shut down or go back to main menu
+                        if serverResponse.__class__ == tuple:
+                            I.printErrors(serverResponse[0])
+                        else:
+                            print(serverResponse)
+                            c.logOut()
+                            raise SystemExit
                         input("Press enter to continue...")
                     case 4: #Log out
                         c.logOut()
