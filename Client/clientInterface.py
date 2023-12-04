@@ -59,7 +59,7 @@ def patient_mainMenu()->int:
             print("That's not a number. Please introduce a valid option.")
 
 
-def patient_askForSymptoms()->tuple(str,bool,bool,bool):
+def patient_askForSymptoms():
     '''Ask user via terminal for the symptoms, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
     sympt= input("Please introduce your symptoms below:\n")
@@ -256,6 +256,8 @@ def admin_selectUserForDeletion(lst:list)->(int,None):
                 print(p[s].capitalize(),end="")
                 if 14-p[s].__len__() >= 0:
                     for j in range(14-p[s].__len__()):print(" ", end="")
+            else:
+                print(p[s], end="")
 
         print("")
 
