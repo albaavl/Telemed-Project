@@ -4,6 +4,8 @@ from json import JSONDecodeError
 
 from bitalino import BITalino as bit
 
+#   Module that contains all client functions that have functionallity. 
+#   No user inputs will be taken by this functions, nor they will output any value to std out
 
 def generatePswHash(password:str) -> bytes:
     '''For a given password `string`, its encrypted and returned as `bytes`'''
