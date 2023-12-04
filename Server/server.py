@@ -64,7 +64,7 @@ class myServer:
         possible_controls = ['new_report','show_patients','show_reports', 'show_users','add_comments','add_user','delete_user','login', 'shut_down']
         try:
             if dic_message['control'] not in possible_controls:
-                csocket.send(json.dumps({'control': 'error', 'content':'Error: format not understood'}).encode('utf8'))
+                raise Exception('Error: format not understood')
             elif dic_message['control'] == 'new_report':
                 #receives a list [patient_id, fatigue, dizziness, sweating, symptoms, parambitalino]
                 content = dic_message['content']
@@ -110,12 +110,12 @@ class myServer:
                 print('logging in new client')
                 csocket.send(json.dumps({'control': 'success', 'content': (userType,userId)}).encode('utf8'))
             elif dic_message['control'] == 'shut_down':
+                print(len(self.sockets))
                 if len(self.sockets) == 2:
-                    csocket.send(json.dumps({'control': 'success',
-                                             'content': 'There are no other clients connected, shutting down the server, this action cannot be undone'}).encode('utf8'))
+                    csocket.send(json.dumps({'control': 'success', 'content': 'There are no other clients connected, shutting down the server, this action cannot be undone'}).encode('utf8'))
                     server.closeServer()
                 else:
-                    csocket.send(json.dumps({'control': 'error', 'content': 'There are clients currently connected to the server, try again later'}).encode('utf8'))
+                    raise Exception('There are clients currently connected to the server, try again later')
 
         except Exception as e:
             print(e)
