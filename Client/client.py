@@ -44,22 +44,19 @@ def runClient():
                             if patientReports in (None,'huh'):
                                 I.clinician_errorRetrievingInfoFromServer()
                             else:
-                                I.clinician_showReports(patientReports)
-                                reportID = I.clinician_selectOption(patientReports)
-                                I.clinician_showSelectedReport(patientReports, reportID)
-                                comment = I.clinician_addComment()
-                                c.sendMsg(L.clinician_addCommentToReport(reportID, comment))
-                                serverResponse = L.decodeServerResponse(c.recvMsg(8192))
-                                if serverResponse.__class__ == tuple:
-                                    I.printErrors(serverResponse[0])
-                                else:
-                                    report = I.clinician_showReports(patientReports)
-                                    if report:
-                                        reportID =  report[0]
-                                        comment = I.clinician_addComment(report[5])
-                                        c.sendMsg(L.clinician_addCommentToReport(reportID,comment))
-                                        serverResponse=L.decodeServerResponse(c.recvMsg(8192))
-                                        if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
+                                reports_available = I.clinician_showReports(patientReports)
+                                if reports_available:
+                                    reportID = I.clinician_selectOption(patientReports)
+                                    I.clinician_showSelectedReport(patientReports, reportID)
+                                    comment = I.clinician_addComment()
+                                    if comment != None:
+                                        c.sendMsg(L.clinician_addCommentToReport(reportID, comment))
+                                        serverResponse = L.decodeServerResponse(c.recvMsg(8192))
+                                        if serverResponse.__class__ == tuple:
+                                            I.printErrors(serverResponse[0])
+                                        else:
+                                            print(serverResponse)
+                                input('Press intro to go back to the main menu...')
                                     
                     case 3: 
                         c.logOut()
@@ -119,16 +116,16 @@ def runClient():
                         while True:
                             patientSymptomsAndComments=I.patient_askForSymptoms()
                             if I.patient_askForParameters():
-                                params=L.patient_connectToBitalino()
+                                params=L.patient_connectToBitalino(I.patient_askForBitalinoMAC())
                                 if params==None:
                                     I.patient_bitalinoError()
                                     break
-                                c.sendMsg(L.patient_sendParams(patientSymptomsAndComments, clientId, params))
+                                c.sendMsg(L.patient_sendReport(patientSymptomsAndComments, clientId, params))
                             else:
-                                c.sendMsg(L.patient_sendParams(patientSymptomsAndComments,clientId)) 
+                                c.sendMsg(L.patient_sendReport(patientSymptomsAndComments, clientId))
                                 serverResponse=L.decodeServerResponse(c.recvMsg(8192))
                             if serverResponse.__class__ == tuple: I.patient_errorWithParams(serverResponse[0]) 
-                            else: I.success()
+                            else: print(serverResponse)
                             break
                     case 2:
                         c.logOut()

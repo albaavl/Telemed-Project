@@ -34,10 +34,10 @@ def decodeServerResponse(query:bytes) -> bytes:
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str="20:16:07:18:17:85", running_time = 5) -> (list):
+def patient_connectToBitalino(mac:str, running_time = 60) -> (list):
     try:
         acqChannels = [2]
-        samplingRate = 1000
+        samplingRate = 100
         nSamples = 10
         digitalOutput_on = [1, 1]
         digitalOutput_off = [0, 0]
@@ -63,12 +63,11 @@ def patient_connectToBitalino(mac:str="20:16:07:18:17:85", running_time = 5) -> 
         return None
 
 
-def patient_sendParams(patientInput:tuple, clientId:int, params:list=None):
-    '''`Content:` list [patientInput(String),params(list)]'''    
+def patient_sendReport(patientInput:tuple, clientId:int, params:list=None):
+    '''Sends report data to server'''
     inputData=[clientId,patientInput[1],patientInput[2],patientInput[3],patientInput[0]]
     if params != None: inputData.append(params)
     return json.dumps({'control':'new_report','content':inputData}).encode('utf8')
-# [clientId,(sympt,dizzy,fatig,sweat),params]
 
 #Clinician only
 

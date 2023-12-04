@@ -7,7 +7,7 @@ import os,math,re
 #Generic fn
 
 def logIn():
-    '''Ask user username and password via terminal, returns: User, Password'''
+    '''Asks for username and password'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("-- Welcome to our client App --")
     username = input("Please introduce your username: ")
@@ -23,9 +23,6 @@ def wrongLogIn(error):
     # print("Wrong username or password, please try again.")
     input("Press enter to continue...")
 
-def success():
-    print("Data sent successfully.")
-    input("Press intro to go back into the main menu.")
 
 def wrongOption():
     os.system('cls' if os.name=='nt' else 'clear')
@@ -35,8 +32,7 @@ def wrongOption():
 #Patient only    
 
 def patient_askForBitalinoMAC():
-    '''Propmt for Bitalino MAC address in console, input is not checked.'''
-    os.system('cls' if os.name=='nt' else 'clear')
+    '''Asks for Bitalino MAC address, input is not checked.'''
     return input("Please introduce the MAC address of your bitalino device: ")
 
 
@@ -60,9 +56,8 @@ def patient_mainMenu()->int:
 
 
 def patient_askForSymptoms():
-    '''Ask user via terminal for the symptoms, returns an unchecked string provided by the user'''
+    '''Asks for the symptoms'''
     os.system('cls' if os.name=='nt' else 'clear')
-    sympt= input("Please introduce your symptoms below:\n")
 
     while True:
         i=input("Do you feel any dizziness? (y/n)")
@@ -91,6 +86,7 @@ def patient_askForSymptoms():
         elif i.capitalize() in ("No", "N"): 
             sweat=False
             break
+    sympt = input("Please introduce any additional symptoms below:\n")
 
     return (sympt,dizzy,fatig,sweat)
     
@@ -98,7 +94,7 @@ def patient_askForSymptoms():
 
 
 def patient_askForParameters()->bool:
-    '''Ask user via terminal whether they want to record parameters or not, returns `True`/`False`.'''
+    '''Asks user whether they want to record parameters or not, returns `True`/`False`.'''
     while True:
         os.system('cls' if os.name=='nt' else 'clear')
         i=input("Would you like to record parameters with your bitalino device? (y/n)")
@@ -114,7 +110,7 @@ def patient_errorWithParams(error):
 #Clinician only
 
 def clinician_mainMenu():
-    '''Generates the main menu for the health expert, returns the option chosen by the user: 1-Show patients; 2-Show reports; 3-Add comment; 4-Logout'''
+    '''Generates the main menu for the health professional, returns the option chosen by the user: 1-Show patients; 2-Show reports; 3-Add comment; 4-Logout'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
     print("  1. Show patients.")
@@ -132,13 +128,16 @@ def clinician_mainMenu():
             print("Invalid input. Please enter a valid integer.")
 
 def clinician_showPatients(patients: list):
-    os.system('cls' if os.name=='nt' else 'clear')
+    '''Prints the patients list'''
     print("Available patients:")
-
-    for patient in patients:
-        print("PatientID: " + str(patient[0]) + " - Name: " + patient[1])
+    if patients == None:
+        print('No patients available')
+    else:
+        for patient in patients:
+            print("PatientID: " + str(patient[0]) + " - Name: " + patient[1])
 
 def clinician_selectOption(pat_or_rep: list):
+    '''This function is used to select an option both for patients and reports based on the IDs received from server'''
     options = []
     for pr in pat_or_rep:
         options.append(pr[0])
@@ -154,20 +153,19 @@ def clinician_selectOption(pat_or_rep: list):
 
 
 def clinician_showReports(reports: list):
-    '''Shows the reports of the patient in the terminal'''
-    os.system('cls' if os.name=='nt' else 'clear')
+    '''Prints the reports of the selected patient'''
     if not reports:
-        print("No reports available.")
+        print("No reports available")
+        return False
     else:
         print("Available reports:")
         for report in reports:
             print("ReportID " + str(report[0]) + " - " + report[2])
+        return True
 
    
 
 def clinician_showSelectedReport(reports: list, report_ID):
-    '''Shows the data of the selected report in the terminal'''
-    os.system('cls' if os.name =='nt' else 'clear')
     for report in reports:
         if report[0] == report_ID:
             break
@@ -178,24 +176,32 @@ def clinician_showSelectedReport(reports: list, report_ID):
         print("Report data:")
         print("Report ID: " + str(report[0]))
         print("Date: " + str(report[2]))
-        print("Symptoms: " + report[3])
-        if report[4]!= None:
-            print("Bitalino signal: " + report[4])
+        print("Fatigue: " + str(bool(report[3])))
+        print("Dizziness: " + str(bool(report[4])))
+        print("Sweating: " + str(bool(report[5])))
+        print("Symptoms: " + report[6])
+        if report[7] != None:
+            print("Bitalino signal: " + report[7])
         else:
             print("No Bitalino signal recorded")
-        print("Comments: " + report[5])
+        if report[8] != None:
+            print("Comments: " + report[8])
+        else: print('No previous comments')
 
 def clinician_addComment():
-    '''Ask user via terminal for the comment, returns an unchecked string provided by the user'''
-    os.system('cls' if os.name=='nt' else 'clear')
-    comment = input("Please introduce your comment below:\n")
+    '''Asks user to input the comments to add to report and returns them or returns None if clinician doesn't want to add comments'''
+    comment = input("Please introduce your comment below, leave it empty and press enter to cancel the operation:\n")
+    if comment == '':
+        return None
     return comment
 
 def clinician_errorRetrievingInfoFromServer():
+    '''Prints error related to getting info back from server'''
     print('Something went wrong while getting the information from the server. Please try again later.')
     input("Press enter to go back into main menu...")
 
-def clinician_failedCommentCreation():
+def clinician_errorSendingInfoToServer():
+    '''Prints error related to sending info to server'''
     print('Something went wrong while sending data to the server. Please try again later.')
     input("Press enter to go back into main menu...")
 
@@ -218,12 +224,12 @@ def admin_mainMenu()->int:
             print("That's not a number. Please introduce a valid option.")
 
 def admin_addUser():
-    '''Prompts user for data necesary to create a new user into the system.\n
+    '''Prompts user for data necessary to create a new user into the system.\n
         Returns the user data required to create a new user, or None if user
         wants to go back without creating a new user.'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("--- Create new user ---")
-    print("Leave name field empty to go back into main menu.")
+    print("Leave name field empty and press enter to go back into main menu")
     name=input("User name:")
     if name == "": return (None,None,None)
     psw=input("User password:")
@@ -239,8 +245,8 @@ def admin_addUser():
 
 
 def admin_selectUserForDeletion(lst:list)->(int,None):
-    '''Provided an user list, will print display all of the users, and ask the user for
-        an user ID (user to be deleted), if the userID provided is within the range of
+    '''Provided an user list, prints all of the users, and asks the user for
+        a user ID (user to be deleted), if the userID provided is within the range of
         user ids of the list, it will be returned (`int`). Otherwise return `None`.'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("--- Users registered in the system ---\n")
