@@ -1,6 +1,9 @@
 import os,math,re
 
 
+#   Module with all functions that provide output values to user
+#   or take inputs from user via console.
+
 #Generic fn
 
 def logIn():
