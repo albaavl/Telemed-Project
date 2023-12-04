@@ -65,7 +65,7 @@ def patient_connectToBitalino(mac:str="20:16:07:18:17:85", running_time = 5) -> 
 
 def patient_sendParams(patientInput:tuple, clientId:int, params:list=None):
     '''`Content:` list [patientInput(String),params(list)]'''    
-    inputData=[clientId,patientInput,]
+    inputData=[clientId,patientInput[0],patientInput[1],patientInput[2],patientInput[3]]
     if params != None: inputData.append(params)
     return json.dumps({'control':'new_report','content':inputData}).encode('utf8')
 # [clientId,(sympt,dizzy,fatig,sweat),params]
