@@ -53,8 +53,7 @@ def runClient():
                                 if serverResponse.__class__ == tuple:
                                     I.printErrors(serverResponse[0])
                                 else:
-                                    report = I.clinician_showPatientReports(patientReports)
-                                    I.clinician_showSelectedReport(report)
+                                    report = I.clinician_showReports(patientReports)
                                     if report:
                                         reportID =  report[0]
                                         comment = I.clinician_addComment(report[5])
@@ -62,9 +61,9 @@ def runClient():
                                         serverResponse=L.decodeServerResponse(c.recvMsg(8192))
                                         if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
                                     
-                        case 3: 
-                            c.logOut()
-                            raise SystemExit
+                    case 3: 
+                        c.logOut()
+                        raise SystemExit
 
                 
         
