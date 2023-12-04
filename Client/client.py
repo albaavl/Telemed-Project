@@ -113,15 +113,15 @@ def runClient():
                 match I.patient_mainMenu():
                     case 1:
                         while True:
-                            symptoms=I.patient_askForSymptoms()
+                            patientSymptomsAndComments=I.patient_askForSymptoms()
                             if I.patient_askForParameters():
                                 params=L.patient_connectToBitalino()
                                 if params==None:
                                     I.patient_bitalinoError()
                                     break
-                                c.sendMsg(L.patient_sendParams(symptoms, clientId, params))
+                                c.sendMsg(L.patient_sendParams(patientSymptomsAndComments, clientId, params))
                             else:
-                                c.sendMsg(L.patient_sendParams(symptoms,clientId)) 
+                                c.sendMsg(L.patient_sendParams(patientSymptomsAndComments,clientId)) 
                                 serverResponse=L.decodeServerResponse(c.recvMsg(8192))
                             if serverResponse.__class__ == tuple: I.patient_errorWithParams(serverResponse[0]) 
                             else: I.success()
