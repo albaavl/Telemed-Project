@@ -63,6 +63,7 @@ def runClient():
                                         if serverResponse in (None,'huh'): I.clinician_failedCommentCreation()
                                     
                         case 3: 
+                            print("ByeBye!")
                             c.logOut()
                             raise SystemExit
 
