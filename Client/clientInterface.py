@@ -59,10 +59,42 @@ def patient_mainMenu()->int:
             print("That's not a number. Please introduce a valid option.")
 
 
-def patient_askForSymptoms()->str:
+def patient_askForSymptoms():
     '''Ask user via terminal for the symptoms, returns an unchecked string provided by the user'''
     os.system('cls' if os.name=='nt' else 'clear')
-    return input("Please introduce your symptoms below:\n")
+    sympt= input("Please introduce your symptoms below:\n")
+
+    while True:
+        i=input("Do you feel any dizziness? (y/n)")
+        if i.capitalize() in ("Yes","Y","Si","S"): 
+            dizzy=True
+            break
+        elif i.capitalize() in ("No", "N"): 
+            dizzy=False
+            break
+    while True:
+        i=input("Do you feel any fatigue? (y/n)")
+        if i.capitalize() in ("Yes","Y","Si","S"): 
+            fatig=True
+            break
+        elif i.capitalize() in ("No", "N"): 
+            fatig=False
+            break
+
+        if i.capitalize() in ("Yes","Y","Si","S"): fatig=True
+        elif i.capitalize() in ("No", "N"): fatig=False
+    while True:
+        i=input("Do you have any sweating? (y/n)")
+        if i.capitalize() in ("Yes","Y","Si","S"): 
+            sweat=True
+            break
+        elif i.capitalize() in ("No", "N"): 
+            sweat=False
+            break
+
+    return (sympt,dizzy,fatig,sweat)
+    
+    
 
 
 def patient_askForParameters()->bool:
@@ -224,6 +256,8 @@ def admin_selectUserForDeletion(lst:list)->(int,None):
                 print(p[s].capitalize(),end="")
                 if 14-p[s].__len__() >= 0:
                     for j in range(14-p[s].__len__()):print(" ", end="")
+            else:
+                print(p[s], end="")
 
         print("")
 

@@ -15,7 +15,7 @@ class Manager:
 
             self.cursor.execute('CREATE TABLE reports(id INTEGER PRIMARY KEY AUTOINCREMENT, '
                                 'patient_id INTEGER REFERENCES users(userId) ON UPDATE CASCADE ON DELETE SET NULL,'
-                                'date DATE NOT NULL, symptoms TEXT, paramBitalino TEXT, HpComments TEXT)')
+                                'date DATE NOT NULL, fatigue BOOLEAN, dizziness BOOLEAN, sweating BOOLEAN, symptoms TEXT, paramBitalino TEXT, HpComments TEXT)')
             self.createUser('admin',self.generatePswHash('admin'), 'admin')
             self.createUser('patient', self.generatePswHash('patient'), 'patient')
             self.createUser('clinician', self.generatePswHash('clinician'), 'clinician')
@@ -53,9 +53,9 @@ class Manager:
         #que se borra hace cascada y es reutilizada por otro user
         return True #pongo esto para que Alba esté contenta :))        
 
-    def new_report(self, patient_id, symptoms, paramBitalino, date, HpComments= None):
-        self.cursor.execute("INSERT INTO reports (patient_id, date, symptoms, paramBitalino, HpComments) VALUES (?, ?, ?, ?, ?)",
-                            (patient_id,date,symptoms, paramBitalino, HpComments))
+    def new_report(self, patient_id, fatigue, dizziness, sweating, symptoms, paramBitalino, date, HpComments= None):
+        self.cursor.execute("INSERT INTO reports (patient_id, date,fatigue, dizziness, sweating, symptoms, paramBitalino, HpComments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                            (patient_id, date,fatigue, dizziness, sweating, symptoms, paramBitalino, HpComments))
         self.connection.commit()
 
     def get_patients(self):
