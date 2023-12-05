@@ -2,7 +2,7 @@ import socket, select, pickle, json, databaseManager as db
 from datetime import date
 
 class myServer:
-    def __init__(self, ip_port=("10.60.59.107",1111)):
+    def __init__(self, ip_port=("10.60.58.172",1111)):
         self.address = ip_port
         self.sockets = []
         self.dbManager = db.Manager()
@@ -53,20 +53,21 @@ class myServer:
         '''This function is used to receive messages from the sockets of the clients'''
         final_message = b''
         try:
-            message = csocket.recv(8096)
+            message = csocket.recv(1024)
             if not message:
                 raise ConnectionResetError
         except ConnectionResetError:
             self.disconnectClient(csocket)
             return
-        if len(message)<8096:
+        if len(message)<1024:
             final_message += message
         else:
+            print('Message received')
             final_message += message
             while message:
-                message = csocket.recv(8096)
+                message = csocket.recv(1024)
                 final_message += message
-                if len(message)<8096:
+                if len(message)<1024:
                     break
         try: dic_message = json.loads(final_message)
         except UnicodeDecodeError: dic_message = pickle.loads(final_message)
@@ -79,7 +80,7 @@ class myServer:
             self.decode_message(dic_message, csocket)
 
     def decode_message(self,dic_message,csocket):
-        '''This function is used to decode the instructions recieved from the clients and generate and send the appropiate response'''
+        '''This function is used to decode the instructions recieved from the clients and generate and sendall the appropiate response'''
         possible_controls = ['new_report','show_patients','show_reports', 'show_users','add_comments','add_user','delete_user','login', 'shut_down']
         try:
             if dic_message['control'] not in possible_controls:
@@ -91,35 +92,35 @@ class myServer:
                     content.append(None)
                 self.dbManager.new_report(content[0],content[1], content[2], content[3], content[4], content[5], date.today())
                 print('Adding new report')
-                csocket.send(json.dumps({'control': 'success', 'content': 'Success: report added to database'}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': 'Success: report added to database'}).encode('utf8'))
             elif dic_message['control'] == 'show_patients':
                 patientList = self.dbManager.get_patients()
                 print('Getting patients from db')
-                csocket.send(json.dumps({'control': 'success', 'content': patientList}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': patientList}).encode('utf8'))
             elif dic_message['control'] == 'show_users':
                 usersList = self.dbManager.get_users()
                 print('Getting users from db')
-                csocket.send(json.dumps({'control': 'success', 'content': usersList}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': usersList}).encode('utf8'))
             elif dic_message['control']=='show_reports':
                 #the content of the dic is the user_id of the patient
                 reports = self.dbManager.get_reports(dic_message['content'])
                 print('Getting reports from db')
-                csocket.send(json.dumps({'control': 'success', 'content': reports}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': reports}).encode('utf8'))
             elif dic_message['control'] == 'add_comments':
                 #the content of the dic is the report_id, comments to add
                 self.dbManager.add_comments(dic_message['content'][0],dic_message['content'][1])
                 print('Adding comments to db')
-                csocket.send(json.dumps({'control': 'success', 'content': 'New comments successfully added to the report'}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': 'New comments successfully added to the report'}).encode('utf8'))
             elif dic_message['control'] == 'add_user':
                 username, password, userType = dic_message['content'][0],dic_message['content'][1], dic_message['content'][2]
                 self.dbManager.createUser(username, password, userType)
                 print('Adding user to db')
-                csocket.send(json.dumps({'control': 'success', 'content': 'New user successfully added'}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': 'New user successfully added'}).encode('utf8'))
             elif dic_message['control'] == 'delete_user':
                 #the content of the dic is the user_id
                 self.dbManager.deleteUser(dic_message['content'])
                 print('Deleting user')
-                csocket.send(json.dumps({'control': 'success', 'content': 'User deleted successfully'}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': 'User deleted successfully'}).encode('utf8'))
             elif dic_message['control'] == 'login':
                 #content = list -> first element is the username and the 2nd is the password
                 userpass = dic_message['content']
@@ -127,18 +128,18 @@ class myServer:
                 password = userpass[1]
                 (userType,userId) = self.dbManager.checkUser(username, password)
                 print('Logging in new client')
-                csocket.send(json.dumps({'control': 'success', 'content': (userType,userId)}).encode('utf8'))
+                csocket.sendall(json.dumps({'control': 'success', 'content': (userType,userId)}).encode('utf8'))
             elif dic_message['control'] == 'shut_down':
                 #sockets list length is used to determined if only the listening socket of the server and the admin socket is connected
                 if len(self.sockets) == 2:
-                    csocket.send(json.dumps({'control': 'success', 'content': 'There are no other clients connected, shutting down the server, this action cannot be undone'}).encode('utf8'))
+                    csocket.sendall(json.dumps({'control': 'success', 'content': 'There are no other clients connected, shutting down the server, this action cannot be undone'}).encode('utf8'))
                     server.closeServer()
                 else:
                     raise Exception('There are clients currently connected to the server, try again later')
 
         except Exception as e:
             print(e)
-            csocket.send(json.dumps({'control': 'error', 'content': e.args}).encode('utf8'))
+            csocket.sendall(json.dumps({'control': 'error', 'content': e.args}).encode('utf8'))
 
 
 
