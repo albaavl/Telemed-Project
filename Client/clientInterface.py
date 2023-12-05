@@ -33,7 +33,7 @@ def wrongOption():
 
 def patient_askForBitalinoMAC():
     '''Asks for Bitalino MAC address, input is not checked.'''
-    return input("Please introduce the MAC address of your bitalino device: ")
+    return input("Please introduce the MAC address of your bitalino device (letters have to be lowercase): ")
 
 
 def patient_bitalinoError():

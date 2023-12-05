@@ -54,6 +54,8 @@ class myServer:
         final_message = b''
         try:
             message = csocket.recv(8096)
+            if not message:
+                raise ConnectionResetError
         except ConnectionResetError:
             self.disconnectClient(csocket)
             return

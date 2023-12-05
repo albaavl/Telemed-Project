@@ -1,6 +1,8 @@
 import hashlib, json, pickle
 import time
 from json import JSONDecodeError
+import matplotlib.pyplot as plt
+import numpy as np
 
 from bitalino import BITalino as bit
 
@@ -34,11 +36,11 @@ def decodeServerResponse(query:bytes) -> bytes:
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str, running_time = 60) -> (list):
+def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 60):
     try:
-        acqChannels = [2]
-        samplingRate = 100
-        nSamples = 10
+        acqChannels = [1]  # channel 2 pero array empieza en 0
+        samplingRate = 1000
+        nSamples = 100
         digitalOutput_on = [1, 1]
         digitalOutput_off = [0, 0]
         # Connect to BITalino
@@ -46,21 +48,27 @@ def patient_connectToBitalino(mac:str, running_time = 60) -> (list):
         device.start(samplingRate, acqChannels)
         start = time.time()
         end = time.time()
-        data = ''
+        data = np.zeros(0)
         device.trigger(digitalOutput_on)
         while (end - start) < running_time:
             # Read samples
-            data += str(device.read(nSamples))
+            data = np.append(data, device.read(nSamples))  # array 1x(6xnsamples) as each sample has 6 values
             end = time.time()
         # Turn BITalino led and buzzer off
+        numberSamples = len(data) / 6
+        sample_list = np.array_split(data, numberSamples)  # separate array in samples
+        samples_2darray = np.vstack(sample_list)  # create a 2d array to plot as cannot access column 5 on list
+
         device.trigger(digitalOutput_off)
         # Stop acquisition
         device.stop()
         # Close connection
         device.close()
-        return data
+        plt.plot(samples_2darray[:, 5])  # plot ECG
+        plt.title('ECG obtained')
+        plt.show()
+        return np.array2string(samples_2darray[:, 5])
     except Exception as e:
-        print(e)
         return None
 
 
