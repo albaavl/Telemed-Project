@@ -52,11 +52,12 @@ class myServer:
     def read_message(self, csocket):
         '''This function is used to receive messages from the sockets of the clients'''
         final_message = b''
-        message = csocket.recv(8096)
-        if not message:
+        try:
+            message = csocket.recv(8096)
+        except ConnectionResetError:
             self.disconnectClient(csocket)
             return
-        elif len(message)<8096:
+        if len(message)<8096:
             final_message += message
         else:
             final_message += message
@@ -70,14 +71,13 @@ class myServer:
         #this is done because the password as bytes cannot be read using a json so we employ the pickle class
         if not dic_message:
             print('Disconnected')
-            self.disconnectingClient(csocket)
+            self.disconnectClient(csocket)
         else:
             print('Message received')
             self.decode_message(dic_message, csocket)
 
     def decode_message(self,dic_message,csocket):
         '''This function is used to decode the instructions recieved from the clients and generate and send the appropiate response'''
-        print(csocket.getsockname())
         possible_controls = ['new_report','show_patients','show_reports', 'show_users','add_comments','add_user','delete_user','login', 'shut_down']
         try:
             if dic_message['control'] not in possible_controls:

@@ -1,4 +1,4 @@
-import os,math,re
+import os,math
 
 
 #   Module with all functions that provide output values to user
@@ -88,7 +88,7 @@ def patient_askForSymptoms():
             break
     sympt = input("Please introduce any additional symptoms below:\n")
 
-    return (sympt,dizzy,fatig,sweat)
+    return (fatig, dizzy, sweat, sympt)
     
     
 

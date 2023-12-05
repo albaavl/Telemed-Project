@@ -59,13 +59,14 @@ def patient_connectToBitalino(mac:str, running_time = 60) -> (list):
         # Close connection
         device.close()
         return data
-    except Exception:
+    except Exception as e:
+        print(e)
         return None
 
 
 def patient_sendReport(patientInput:tuple, clientId:int, params:list=None):
     '''Sends report data to server'''
-    inputData=[clientId,patientInput[1],patientInput[2],patientInput[3],patientInput[0]]
+    inputData=[clientId,patientInput[0],patientInput[1],patientInput[2],patientInput[3]]
     if params != None: inputData.append(params)
     return json.dumps({'control':'new_report','content':inputData}).encode('utf8')
 
