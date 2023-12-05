@@ -1,5 +1,7 @@
 import os,math
 
+from matplotlib import pyplot as plt
+
 
 #   Module with all functions that provide output values to user
 #   or take inputs from user via console.
@@ -113,14 +115,15 @@ def clinician_mainMenu():
     '''Generates the main menu for the health professional, returns the option chosen by the user: 1-Show patients; 2-Show reports; 3-Add comment; 4-Logout'''
     os.system('cls' if os.name=='nt' else 'clear')
     print("Available options:")
-    print("  1. Show patients.")
-    print("  2. Add comment to reports.")
-    print("  3. Log out.")
+    print("  1. Show patients")
+    print("  2. Add comment to reports")
+    print("  3. Show reports")
+    print("  4. Log out")
 
     while True:
         try:
             option = int(input("Please select one option: "))
-            if option in [1, 2, 3]:
+            if option in [1, 2, 3, 4]:
                 return option
             else:
                 print("Invalid option. Please enter a number within the valid range.")
@@ -166,6 +169,7 @@ def clinician_showReports(reports: list):
    
 
 def clinician_showSelectedReport(reports: list, report_ID):
+    '''Prints selected report with an ECG plot'''
     for report in reports:
         if report[0] == report_ID:
             break
@@ -180,13 +184,20 @@ def clinician_showSelectedReport(reports: list, report_ID):
         print("Dizziness: " + str(bool(report[4])))
         print("Sweating: " + str(bool(report[5])))
         print("Symptoms: " + report[6])
-        if report[7] != None:
-            print("Bitalino signal: " + report[7])
-        else:
-            print("No Bitalino signal recorded")
         if report[8] != None:
             print("Comments: " + report[8])
         else: print('No previous comments')
+        if report[7] != None:
+            bitalino_signal = list()
+            string_withoutBrackets = report[7].removeprefix('[').removesuffix(']')
+            bitalino_stringList = string_withoutBrackets.split(', ')
+            for sample in bitalino_stringList:
+                bitalino_signal.append(float(sample))
+            plt.plot(bitalino_signal)
+            plt.title('ECG recorded')
+            plt.show()
+        else:
+            print("No Bitalino signal recorded")
 
 def clinician_addComment():
     '''Asks user to input the comments to add to report and returns them or returns None if clinician doesn't want to add comments'''

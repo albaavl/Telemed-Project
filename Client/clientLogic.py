@@ -57,8 +57,13 @@ def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 60):
         # Turn BITalino led and buzzer off
         numberSamples = len(data) / 6
         sample_list = np.array_split(data, numberSamples)  # separate array in samples
+        #print('Sample list')
+        #or s in sample_list:
+         #   print(s)
         samples_2darray = np.vstack(sample_list)  # create a 2d array to plot as cannot access column 5 on list
-
+        #print('Sample array')
+        #for s in samples_2darray:
+            #print(s)
         device.trigger(digitalOutput_off)
         # Stop acquisition
         device.stop()
@@ -67,7 +72,10 @@ def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 60):
         plt.plot(samples_2darray[:, 5])  # plot ECG
         plt.title('ECG obtained')
         plt.show()
-        return np.array2string(samples_2darray[:, 5])
+        sample_list2 = []
+        for i in samples_2darray[:,5]:
+            sample_list2.append(i)
+        return str(sample_list2)
     except Exception as e:
         return None
 

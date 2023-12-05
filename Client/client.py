@@ -59,7 +59,26 @@ def runClient():
                                             print(serverResponse)
                                 input('Press intro to go back to the main menu...')
                                     
-                    case 3: 
+                    case 3:
+                            c.sendMsg(L.clinician_requestPatientsList())
+                            patientList = L.decodeServerResponse(c.recvMsg(8192))
+                            if patientList in (None, 'huh'):
+                                I.clinician_errorRetrievingInfoFromServer()
+                            else:
+                                I.clinician_showPatients(patientList)
+                                patientID = I.clinician_selectOption(patientList)
+                                c.sendMsg(L.clinician_requestPatientReports(patientID))
+                                patientReports = L.decodeServerResponse(c.recvMsg(8192))
+                                if patientReports in (None, 'huh'):
+                                    I.clinician_errorRetrievingInfoFromServer()
+                                else:
+                                    reports_available = I.clinician_showReports(patientReports)
+                                    if reports_available:
+                                        reportID = I.clinician_selectOption(patientReports)
+                                        I.clinician_showSelectedReport(patientReports, reportID)
+                                    input('Press intro to go back to the main menu...')
+
+                    case 4:
                         c.logOut()
                         raise SystemExit
 
