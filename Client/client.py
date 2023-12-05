@@ -1,7 +1,7 @@
 import clientInterface as I
 import ClientConnection
 import clientLogic as L
-
+import time
 
 
 def runClient(): 
@@ -141,6 +141,8 @@ def runClient():
                                     I.patient_bitalinoError()
                                     break
                                 c.sendMsg(L.patient_sendReport(patientSymptomsAndComments, clientId, params))
+                                serverResponse=L.decodeServerResponse(c.recvMsg())
+
                             else:
                                 c.sendMsg(L.patient_sendReport(patientSymptomsAndComments, clientId))
                                 serverResponse=L.decodeServerResponse(c.recvMsg())
