@@ -137,11 +137,13 @@ def runClient():
                             patientSymptomsAndComments=I.patient_askForSymptoms()
                             if I.patient_askForParameters():
                                 params=L.patient_connectToBitalino(I.patient_askForBitalinoMAC())
-                                if params==None:
-                                    I.patient_bitalinoError()
-                                    break
-                                c.sendMsg(L.patient_sendReport(patientSymptomsAndComments, clientId, params))
-                                serverResponse=L.decodeServerResponse(c.recvMsg())
+                                while True:
+                                    if params==None:
+                                        I.patient_bitalinoError()
+                                        break
+                                    c.sendMsg(L.patient_sendReport(patientSymptomsAndComments, clientId, params))
+                                    serverResponse=L.decodeServerResponse(c.recvMsg())
+                                    time.sleep(5)
 
                             else:
                                 c.sendMsg(L.patient_sendReport(patientSymptomsAndComments, clientId))

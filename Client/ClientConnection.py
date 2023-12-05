@@ -4,7 +4,7 @@ import socket
 class ClientConnection:
     '''Class containing client socket, any connection to server should be done through this class.'''
 
-    def __init__(self,servIp:str|None='127.0.0.1',servPort:int|None=1111):
+    def __init__(self,servIp:str|None='192.168.1.37',servPort:int|None=1111):
         self.socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.connect((servIp,servPort)) 
@@ -20,30 +20,30 @@ class ClientConnection:
 
     def recvMsg(self):
         '''Returns bytes received from server'''
+        try:
+            inB=self.socket.recv(1024)
+            if(inB!=b''):inB=inB.split(b':')
+            else: return None
+            if(inB.__class__!=list):return b'WrongFormat'
+            if(inB.__len__()!=3):return b'DedSock'
+            if(inB[0]!=b'!sizeof'):return b'WrongFormat'
+            if(inB[2]!=b'end!'):
+                i=10
+                while i!=0:
+                    if(self.socket.recv(1)==b''): return b'DedSock'
+                    if(self.socket.recv(1)!=b'!'):--i
+                    else: break
+                    if(i==0): return b'WrongFormat'
 
-        inB=self.socket.recv(1024)
-        if(inB!=b''):inB=inB.split(b':')
-        else: return None
-        if(inB.__class__!=list):return b'WrongFormat'
-        if(inB.__len__()!=3):return b'DedSock'
-        if(inB[0]!=b'!sizeof'):return b'WrongFormat'
-        if(inB[2]!=b'end!'):
-            i=10
-            while i!=0:
-                if(self.socket.recv(1)==b''): return b'DedSock'
-                if(self.socket.recv(1)!=b'!'):--i
-                else: break
-                if(i==0): return b'WrongFormat'
+            self.socket.sendall(b'ack')
 
-        self.socket.sendall(b'ack')
-
-        fBytes=b''
-        while True:
-            rBytes=self.socket.recv(1024)
-            if(rBytes==b''): return b'DedSock'
-            fBytes+=rBytes
-            if(fBytes.__sizeof__()==int(inB[1].decode('utf8'))): return fBytes
-        
+            fBytes=b''
+            while True:
+                rBytes=self.socket.recv(16384)
+                if(rBytes==b''): return b'DedSock'
+                fBytes+=rBytes
+                if(fBytes.__sizeof__()==int(inB[1].decode('utf8'))): return fBytes
+        except ConnectionResetError:return b'DedSock'
 
     def logOut(self):
         '''Close socket connection.'''
