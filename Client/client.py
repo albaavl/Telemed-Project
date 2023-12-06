@@ -4,9 +4,9 @@ import clientLogic as L
 import sys
 
 
-def runClient(ip:str|None=None): 
+def runClient(ip:str='127.0.0.1'): 
 
-    c = ClientConnection.ClientConnection(ip)
+    c = ClientConnection.ClientConnection(ip,1111)
 
     while True:
         

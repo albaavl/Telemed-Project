@@ -2,7 +2,7 @@ import sys, socket, select, json, databaseManager as db
 from datetime import date
 
 class myServer:
-    def __init__(self, ip_port=("1287.0.0.1",1111)):
+    def __init__(self, ip_port=("127.0.0.1",1111)):
         self.address = ip_port
         self.sockets = []
         self.dbManager = db.Manager()
