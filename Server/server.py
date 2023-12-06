@@ -2,7 +2,7 @@ import socket, select, pickle, json, databaseManager as db
 from datetime import date
 
 class myServer:
-    def __init__(self, ip_port=("10.60.59.107",1111)):
+    def __init__(self, ip_port=("0.0.0.0",1111)):
         self.address = ip_port
         self.sockets = []
         self.dbManager = db.Manager()
@@ -53,28 +53,22 @@ class myServer:
         '''This function is used to receive messages from the sockets of the clients'''
         final_message = b''
         try:
-            message = csocket.recv(8096)
+            message = csocket.recv(1024)
             if not message:
                 raise ConnectionResetError
         except ConnectionResetError:
             self.disconnectClient(csocket)
             return
-        if len(message)<8096:
+        if message.endswith(b"}"): #this means the message has been completely read, as all jsons end with that
             final_message += message
         else:
             final_message += message
-            while message:
-                message = csocket.recv(8096)
+            while True:
+                message = csocket.recv(1024)
                 final_message += message
-                if len(message)<8096:
+                if final_message.endswith(b"}"):
                     break
-        try: dic_message = json.loads(final_message)
-        except UnicodeDecodeError: dic_message = pickle.loads(final_message)
-        #this is done because the password as bytes cannot be read using a json so we employ the pickle class
-        if not dic_message:
-            print('Disconnected')
-            self.disconnectClient(csocket)
-        else:
+            dic_message = json.loads(final_message)
             print('Message received')
             self.decode_message(dic_message, csocket)
 

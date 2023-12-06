@@ -1,3 +1,4 @@
+import base64
 import hashlib
 import sqlite3
 
@@ -92,7 +93,10 @@ class Manager:
         except Exception as e:
             raise ValueError(f"Failed to update comments")
 
-    def generatePswHash(self,password:str):
+    def generatePswHash(self, password: str) -> str:
+        '''For a given password `string`, its encrypted and returned as `bytes`'''
         hashgen = hashlib.sha512()
         hashgen.update(password.encode('utf8'))
-        return hashgen.digest()
+        pass_bytes = hashgen.digest()
+        base64str_pass = base64.b64encode(pass_bytes).decode('utf-8')
+        return base64str_pass

@@ -12,7 +12,7 @@ def runClient():
         
         n,p=I.logIn()
         c.sendMsg(L.sendLoginCredentials(n,L.generatePswHash(p)))
-        serverResponse = L.decodeServerResponse(c.recvMsg(2048))
+        serverResponse = L.decodeServerResponse(c.recvMsg(1024))
         if serverResponse.__class__== list and serverResponse.__len__()==2: 
             clientType = serverResponse[0]
             clientId = serverResponse[1]
@@ -24,7 +24,7 @@ def runClient():
                 match I.clinician_mainMenu():
                     case 1: #Show all patients
                         c.sendMsg(L.clinician_requestPatientsList())
-                        patientList = L.decodeServerResponse(c.recvMsg(8192))
+                        patientList = L.decodeServerResponse(c.recvMsg(1024))
                         if patientList in (None,'huh'):
                             I.clinician_errorRetrievingInfoFromServer()
                         else:
@@ -34,14 +34,14 @@ def runClient():
 
                     case 2:
                         c.sendMsg(L.clinician_requestPatientsList())
-                        patientList = L.decodeServerResponse(c.recvMsg(8192))
+                        patientList = L.decodeServerResponse(c.recvMsg(1024))
                         if patientList in (None, 'huh'):
                             I.clinician_errorRetrievingInfoFromServer()
                         else:
                             I.clinician_showPatients(patientList)
                             patientID = I.clinician_selectOption(patientList)
                             c.sendMsg(L.clinician_requestPatientReports(patientID))
-                            patientReports = L.decodeServerResponse(c.recvMsg(8192))
+                            patientReports = L.decodeServerResponse(c.recvMsg(1024))
                             if patientReports in (None,'huh'):
                                 I.clinician_errorRetrievingInfoFromServer()
                             else:
@@ -52,7 +52,7 @@ def runClient():
                                     comment = I.clinician_addComment()
                                     if comment != None:
                                         c.sendMsg(L.clinician_addCommentToReport(reportID, comment))
-                                        serverResponse = L.decodeServerResponse(c.recvMsg(8192))
+                                        serverResponse = L.decodeServerResponse(c.recvMsg(1024))
                                         if serverResponse.__class__ == tuple:
                                             I.printErrors(serverResponse[0])
                                         else:
@@ -61,14 +61,14 @@ def runClient():
                                     
                     case 3:
                             c.sendMsg(L.clinician_requestPatientsList())
-                            patientList = L.decodeServerResponse(c.recvMsg(8192))
+                            patientList = L.decodeServerResponse(c.recvMsg(1024))
                             if patientList in (None, 'huh'):
                                 I.clinician_errorRetrievingInfoFromServer()
                             else:
                                 I.clinician_showPatients(patientList)
                                 patientID = I.clinician_selectOption(patientList)
                                 c.sendMsg(L.clinician_requestPatientReports(patientID))
-                                patientReports = L.decodeServerResponse(c.recvMsg(8192))
+                                patientReports = L.decodeServerResponse(c.recvMsg(1024))
                                 if patientReports in (None, 'huh'):
                                     I.clinician_errorRetrievingInfoFromServer()
                                 else:
@@ -93,7 +93,7 @@ def runClient():
                             if username==None: break
                             psw = L.generatePswHash(psw)
                             c.sendMsg(L.admin_createUser(username,psw,usertype))
-                            serverResponse=L.decodeServerResponse(c.recvMsg(8192))
+                            serverResponse=L.decodeServerResponse(c.recvMsg(1024))
                             if serverResponse.__class__ == tuple: I.printErrors(serverResponse[0]) 
                             else: print(serverResponse)
                             input("Press enter to go back to menu...")

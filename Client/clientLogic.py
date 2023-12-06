@@ -1,3 +1,4 @@
+import base64
 import hashlib, json, pickle
 import time
 from json import JSONDecodeError
@@ -9,16 +10,21 @@ from bitalino import BITalino as bit
 #   Module that contains all client functions that have functionallity. 
 #   No user inputs will be taken by this functions, nor they will output any value to std out
 
-def generatePswHash(password:str) -> bytes:
-    '''For a given password `string`, its encrypted and returned as `bytes`'''
+
+def generatePswHash(password:str) -> str:
+    '''For a given password `string`, its encrypted and returned it'''
     hashgen = hashlib.sha512()
     hashgen.update(password.encode('utf8'))
-    return hashgen.digest()
+    pass_bytes = hashgen.digest()
+    base64str_pass = base64.b64encode(pass_bytes).decode('utf-8')
+    return base64str_pass
 
-def sendLoginCredentials(usr:str,psw:bytes) -> bytes:
-    '''Requires username `string` and password `bytes`, returns log in
+
+
+def sendLoginCredentials(usr:str,psw:str) -> bytes:
+    '''Requires username `string` and password `string`, returns log in
         query in bytes'''
-    return pickle.dumps({'control':'login','content':[usr,psw]}) 
+    return json.dumps({'control':'login','content':[usr,psw]}).encode('utf-8')
 
 def decodeServerResponse(query:bytes) -> bytes:
     '''Return `content` AKA the response value, or  `None` if the response has invalid format.\n
@@ -41,7 +47,7 @@ def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 60):
         acqChannels = [1]  # channel 2 pero array empieza en 0
         samplingRate = 1000
         nSamples = 100
-        digitalOutput_on = [1, 1]
+        digitalOutput_on = [1, 0]
         digitalOutput_off = [0, 0]
         # Connect to BITalino
         device = bit(mac)
