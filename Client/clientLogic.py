@@ -103,6 +103,9 @@ def clinician_requestPatientReports(patientID:int):
 def clinician_addCommentToReport(reportID:int, comments:str):
     return json.dumps({'control':'add_comments','content':[reportID,comments]}).encode('utf8')
 
+def clinician_getReport(reportID:int):
+    return json.dumps({'control':'get_report','content':reportID}).encode('utf8')
+
 #Admin only
 
 def admin_createUser(name:str, psw:bytes, userType:str) -> bytes:
