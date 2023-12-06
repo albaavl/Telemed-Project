@@ -109,7 +109,7 @@ def admin_createUser(name:str, psw:bytes, userType:str) -> bytes:
     '''Generate query to create a new User: \n >`name` must be provided as an `string`.
         \n >`password` must be bytes, preferrably encrypted (Bytes will be sent as provided). \nReturns the query in `bytes`.'''
     userData=(name,psw,userType)    
-    return pickle.dumps({'control':'add_user','content':userData})
+    return json.dumps({'control':'add_user','content':userData}).encode('utf8')
 
 def admin_showAllUsers() -> bytes:
     '''Generates query to get all users from database. No input required. Returns the query in `bytes`.'''
