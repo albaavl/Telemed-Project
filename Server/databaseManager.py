@@ -80,11 +80,19 @@ class Manager:
     def get_reports(self, patientId):
         #que devuelva una lista con todos los reports del paciente (todos los parametros), error si no hay con explicacion
         try:
-            self.cursor.execute("SELECT * FROM reports WHERE patient_id = ?", (patientId,))
+            self.cursor.execute("SELECT id, date FROM reports WHERE patient_id = ?", (patientId,))
             reports = self.cursor.fetchall()
             return reports
         except Exception as e:
             raise ValueError(f"Failed to retrieve the list of reports")
+
+    def get_selectedReport(self, reportId):
+        try:
+            self.cursor.execute("SELECT * FROM reports WHERE id = ?", (reportId,))
+            report = self.cursor.fetchall()
+            return report
+        except Exception as e:
+            raise ValueError(f"Failed to retrieve the selected report")
 
     def add_comments(self, reportId, comments):
         try:

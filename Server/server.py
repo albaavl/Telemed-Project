@@ -2,7 +2,7 @@ import socket, select, pickle, json, databaseManager as db
 from datetime import date
 
 class myServer:
-    def __init__(self, ip_port=("172.20.10.8",1111)):
+    def __init__(self, ip_port=("172.20.10.3",1111)):
         self.address = ip_port
         self.sockets = []
         self.dbManager = db.Manager()
@@ -74,7 +74,7 @@ class myServer:
 
     def decode_message(self,dic_message,csocket):
         '''This function is used to decode the instructions recieved from the clients and generate and send the appropiate response'''
-        possible_controls = ['new_report','show_patients','show_reports', 'show_users','add_comments','add_user','delete_user','login', 'shut_down']
+        possible_controls = ['new_report','show_patients','show_reports', 'get_report', 'show_users','add_comments','add_user','delete_user','login', 'shut_down']
         try:
             if dic_message['control'] not in possible_controls:
                 raise Exception('Error: format not understood')
@@ -99,6 +99,11 @@ class myServer:
                 reports = self.dbManager.get_reports(dic_message['content'])
                 print('Getting reports from db')
                 csocket.send(json.dumps({'control': 'success', 'content': reports}).encode('utf8'))
+            elif dic_message['control'] == 'get_report':
+                # the content of the dic is the user_id of the patient
+                report = self.dbManager.get_selectedReport(dic_message['content'])
+                print('Getting selected report from db')
+                csocket.send(json.dumps({'control': 'success', 'content': report}).encode('utf8'))
             elif dic_message['control'] == 'add_comments':
                 #the content of the dic is the report_id, comments to add
                 self.dbManager.add_comments(dic_message['content'][0],dic_message['content'][1])
