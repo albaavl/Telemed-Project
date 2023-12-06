@@ -11,16 +11,16 @@ class ClientConnection:
     
     def sendMsg(self,msg:bytes):
         '''Sends the provided bytes to the server'''
-+        self.socket.send(msg)
+        self.socket.send(msg)
 
     def recvMsg(self,buffSize:int):
         '''Returns bytes received from server'''
 
         fBytes=b''
-        while True:
+        while (True):
             rBytes=self.socket.recv(buffSize)
             fBytes+=rBytes
-            if(len(rBytes)<buffSize): return fBytes
+            if(fBytes.endswith(b'}')): return fBytes
         
 
     def logOut(self):
