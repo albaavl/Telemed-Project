@@ -1,12 +1,12 @@
 import clientInterface as I
 import ClientConnection
 import clientLogic as L
+import sys
 
 
+def runClient(ip:str|None=None): 
 
-def runClient(): 
-
-    c = ClientConnection.ClientConnection()
+    c = ClientConnection.ClientConnection(ip)
 
     while True:
         
@@ -156,4 +156,7 @@ def runClient():
 
 
 if __name__ == "__main__": 
-    runClient()
+    if len(sys.argv)==2: 
+        runClient(sys.argv[1])
+    else:
+        runClient()
