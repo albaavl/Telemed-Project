@@ -5,6 +5,7 @@ import sqlite3
 class Manager:
 
     def __init__(self):
+        '''connects to db and creates the users and reports tables'''
         self.connection = sqlite3.connect('database.db')
         self.cursor = self.connection.cursor()
         if self.cursor.execute('SELECT name FROM sqlite_master').fetchone() is None:
@@ -22,11 +23,10 @@ class Manager:
             self.createUser('clinician', self.generatePswHash('clinician'), 'clinician')
 
 
-    #devuelve el userType en caso de existir el usuario y contraseña y si no existe devuelve excepcion
     def checkUser(self,username:str,password =b'admin'):
+        '''returns the user and password if they exist and if not it gives an exception'''
         self.cursor.execute("SELECT userType,userId FROM users WHERE username=? AND password=?", (username, password))
         user_type = self.cursor.fetchone()
-        #tiene que devolver solo el tipo de usuario que es y si no esta en la tabla lanzar una excepcion
         if user_type:
             return user_type
         else:
@@ -35,7 +35,7 @@ class Manager:
 
 
     def createUser(self, username:str, password:bytes, userType:str):
-        '''Raises ValueError if userType is not admin, patient or clinician'''
+        '''creates the user with the password and user provided and Raises ValueError if userType is not admin, patient or clinician'''
         if userType not in ("admin", "patient","clinician"): raise ValueError(f"Invalid usertype, you have to choose between admin, patient or clinician") #añadiria texto al pq del value error para poder mandarlo al cliente y que se entienda cual es el error
         #username deberia ser unico aka comprobar que no hay otro y sino tbb error
         self.cursor.execute("SELECT username FROM users WHERE username = ?",(username,))
@@ -48,19 +48,18 @@ class Manager:
         #devolver algo si se ha añadido bien, maybe un true?
 
     def deleteUser(self, userId:int):
+        '''deletes the user provided via id'''
         self.cursor.execute("DELETE FROM users WHERE userId = ?",(userId,))
-        #lo mismo que en createUser, devolveria algo para hacer el check de que t o d o guay
-        #no hay forma de checkear que ha ido bien porque lo unico que linkea es userId y una vez
-        #que se borra hace cascada y es reutilizada por otro user
         return True #pongo esto para que Alba esté contenta :))        
 
     def new_report(self, patient_id, fatigue, dizziness, sweating, symptoms, paramBitalino, date, HpComments= None):
+        '''adds report to the reports table'''
         self.cursor.execute("INSERT INTO reports (patient_id, date,fatigue, dizziness, sweating, symptoms, paramBitalino, HpComments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                             (patient_id, date,fatigue, dizziness, sweating, symptoms, paramBitalino, HpComments))
         self.connection.commit()
 
     def get_patients(self):
-        #que devuelva una lista con todos los pacientes (userdID, username), error si no hay con explicacion
+        '''returns a list with all the patients (userID and username)'''
         try:
             self.cursor.execute("SELECT userId, username FROM users WHERE userType = 'patient'")
             patients = self.cursor.fetchall()
@@ -69,7 +68,7 @@ class Manager:
             raise ValueError(f"Failed to retrieve the list of patients")
     
     def get_users(self):
-        #que devuelva una lista con todos los usuarios (userdID, username, userType), error si no hay con explicacion
+        '''returns a list with all users (userID, username and usertype)'''
         try:
             self.cursor.execute("SELECT userId, username, userType FROM users")
             users = self.cursor.fetchall()
@@ -78,7 +77,7 @@ class Manager:
             raise ValueError(f"Failed to retrieve the list of users")
 
     def get_reports(self, patientId):
-        #que devuelva una lista con todos los reports del paciente (todos los parametros), error si no hay con explicacion
+        '''returns a list with all the reports of the specified patient'''
         try:
             self.cursor.execute("SELECT id, date FROM reports WHERE patient_id = ?", (patientId,))
             reports = self.cursor.fetchall()
@@ -87,14 +86,16 @@ class Manager:
             raise ValueError(f"Failed to retrieve the list of reports")
 
     def get_selectedReport(self, reportId):
+        '''returns selected report'''
         try:
             self.cursor.execute("SELECT * FROM reports WHERE id = ?", (reportId,))
-            report = self.cursor.fetchall()
+            report = self.cursor.fetchone()
             return report
         except Exception as e:
             raise ValueError(f"Failed to retrieve the selected report")
 
     def add_comments(self, reportId, comments):
+        '''adds health professional comments'''
         try:
             self.cursor.execute("UPDATE reports SET HpComments = ? WHERE id = ?", (comments, reportId))
             return True
