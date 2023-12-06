@@ -2,7 +2,7 @@ import socket, select, pickle, json, databaseManager as db
 from datetime import date
 
 class myServer:
-    def __init__(self, ip_port=("172.20.10.8",1111)):
+    def __init__(self, ip_port=("172.20.10.3",1111)):
         self.address = ip_port
         self.sockets = []
         self.dbManager = db.Manager()
