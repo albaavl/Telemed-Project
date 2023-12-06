@@ -42,7 +42,8 @@ def decodeServerResponse(query:bytes) -> bytes:
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 180):
+def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 60):
+    '''Connects to the bitalino whose mac address is specified in mac and reads ECG for 60 seconds, then plots the ECG and returns string with the ECG signal recorded'''
     try:
         acqChannels = [1]  # channel 2 pero array empieza en 0
         samplingRate = 1000
@@ -95,15 +96,19 @@ def patient_sendReport(patientInput:tuple, clientId:int, params:list=None):
 #Clinician only
 
 def clinician_requestPatientsList():
+    '''Generates query to ask for the list of patients'''
     return json.dumps({'control':'show_patients'}).encode('utf8')
 
 def clinician_requestPatientReports(patientID:int):
+    '''Generates query to ask for the list of reports'''
     return json.dumps({'control':'show_reports','content':patientID}).encode('utf8')
 
 def clinician_addCommentToReport(reportID:int, comments:str):
+    '''Generates query to add a hpcomment to a report specified by reportID'''
     return json.dumps({'control':'add_comments','content':[reportID,comments]}).encode('utf8')
 
 def clinician_getReport(reportID:int):
+    '''Generates query to ask for all the information of a report'''
     return json.dumps({'control':'get_report','content':reportID}).encode('utf8')
 
 #Admin only
