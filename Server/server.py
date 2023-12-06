@@ -2,7 +2,7 @@ import socket, select, pickle, json, databaseManager as db
 from datetime import date
 
 class myServer:
-    def __init__(self, ip_port=("0.0.0.0",1111)):
+    def __init__(self, ip_port=("172.20.10.8",1111)):
         self.address = ip_port
         self.sockets = []
         self.dbManager = db.Manager()
@@ -56,21 +56,21 @@ class myServer:
             message = csocket.recv(1024)
             if not message:
                 raise ConnectionResetError
-        except ConnectionResetError:
-            self.disconnectClient(csocket)
-            return
-        if message.endswith(b"}"): #this means the message has been completely read, as all jsons end with that
-            final_message += message
-        else:
-            final_message += message
-            while True:
-                message = csocket.recv(1024)
+            if message.endswith(b"}"): #this means the message has been completely read, as all jsons end with that
                 final_message += message
-                if final_message.endswith(b"}"):
-                    break
+            else:
+                final_message += message
+                while True:
+                    message = csocket.recv(1024)
+                    final_message += message
+                    if final_message.endswith(b"}"):
+                        break
             dic_message = json.loads(final_message)
             print('Message received')
             self.decode_message(dic_message, csocket)
+        except ConnectionResetError:
+            self.disconnectClient(csocket)
+            return
 
     def decode_message(self,dic_message,csocket):
         '''This function is used to decode the instructions recieved from the clients and generate and send the appropiate response'''
