@@ -42,7 +42,7 @@ def decodeServerResponse(query:bytes) -> bytes:
 
 #Patient Only    
 
-def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 60):
+def patient_connectToBitalino(mac:str = '98:d3:11:fd:1e:cc', running_time = 180):
     try:
         acqChannels = [1]  # channel 2 pero array empieza en 0
         samplingRate = 1000
