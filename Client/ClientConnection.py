@@ -11,8 +11,7 @@ class ClientConnection:
     
     def sendMsg(self,msg:bytes):
         '''Sends the provided bytes to the server'''
-        print(msg)
-        self.socket.send(msg)
++        self.socket.send(msg)
 
     def recvMsg(self,buffSize:int):
         '''Returns bytes received from server'''
