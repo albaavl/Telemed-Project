@@ -163,16 +163,13 @@ def clinician_showReports(reports: list):
     else:
         print("Available reports:")
         for report in reports:
-            print("ReportID " + str(report[0]) + " - " + report[2])
+            print("ReportID " + str(report[0]) + " - " + report[1])
         return True
 
    
 
-def clinician_showSelectedReport(reports: list, report_ID):
+def clinician_showSelectedReport(report: list):
     '''Prints selected report with an ECG plot'''
-    for report in reports:
-        if report[0] == report_ID:
-            break
     if not report:
         print("No report.")
         return input("Press enter to continue...")

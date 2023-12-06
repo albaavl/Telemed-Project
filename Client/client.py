@@ -47,8 +47,9 @@ def runClient():
                             else:
                                 reports_available = I.clinician_showReports(patientReports)
                                 if reports_available:
-                                    reportID = I.clinician_selectOption(patientReports)
-                                    I.clinician_showSelectedReport(patientReports, reportID)
+                                    reportID=I.clinician_selectOption(patientReports)
+                                    c.sendMsg(L.clinician_getReport(reportID))
+                                    I.clinician_showSelectedReport(L.decodeServerResponse(c.recvMsg(1024)))
                                     comment = I.clinician_addComment()
                                     if comment != None:
                                         c.sendMsg(L.clinician_addCommentToReport(reportID, comment))
@@ -75,7 +76,8 @@ def runClient():
                                     reports_available = I.clinician_showReports(patientReports)
                                     if reports_available:
                                         reportID = I.clinician_selectOption(patientReports)
-                                        I.clinician_showSelectedReport(patientReports, reportID)
+                                        c.sendMsg(L.clinician_getReport(reportID))
+                                        I.clinician_showSelectedReport(L.decodeServerResponse(c.recvMsg(1024)))
                                     input('Press intro to go back to the main menu...')
 
                     case 4:
